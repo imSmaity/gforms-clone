@@ -1,9 +1,18 @@
-import styles from './page.module.css'
+import Input from "@/components/input/Input";
+
+import QuestionCard from "@/components/card/QuestionCard";
+import { Box } from "@mui/material";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}></main>
+    <div>
+      <main>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <QuestionCard>
+            <Input width={"100%"} />
+          </QuestionCard>
+        </Box>
+      </main>
     </div>
-  )
+  );
 }
