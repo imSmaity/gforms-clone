@@ -1,16 +1,12 @@
-import Input from "@/components/input/Input";
-
-import QuestionCard from "@/components/card/QuestionCard";
 import { Box } from "@mui/material";
+import HeaderSlide from "@/components/slides/HeaderSlide";
 
 export default function Home() {
   return (
     <div>
       <main>
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <QuestionCard>
-            <Input width={"100%"} />
-          </QuestionCard>
+        <Box sx={{ display: "flex", justifyContent: "center", pt: 15 }}>
+          <HeaderSlide />
         </Box>
       </main>
     </div>
