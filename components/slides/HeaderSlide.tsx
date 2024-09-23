@@ -35,7 +35,7 @@ const HeaderSlide = () => {
           placeholder={constant.header.placeholder.title}
           editorState={title}
           setEditorState={setTitle}
-          sx={{ fontSize: "24px" }}
+          // sx={{ fontSize: "24px" }}
           onFocus={() => setActiveInput({ title: true, description: false })}
           onBlur={() => setActiveInput((prev) => ({ ...prev, title: false }))}
         />
@@ -46,7 +46,7 @@ const HeaderSlide = () => {
           setEditorState={setDescription}
           isShowNumberedList={true}
           isShowBulletedList={true}
-          sx={{ fontSize: "12px" }}
+          // sx={{ fontSize: "12px" }}
           onFocus={() => setActiveInput({ title: false, description: true })}
           onBlur={() =>
             setActiveInput((prev) => ({ ...prev, description: false }))

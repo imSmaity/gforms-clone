@@ -15,22 +15,8 @@ interface IInputProps {
   sx?: SxProps<Theme>;
   isShowNumberedList?: boolean;
   isShowBulletedList?: boolean;
+  fontSize?: number;
 }
-
-const styleMap = {
-  FONT_FAMILY_ROBOTO: {
-    fontFamily: "Roboto, sans-serif",
-  },
-  FONT_FAMILY_ARIAL: {
-    fontFamily: "Arial, sans-serif",
-  },
-  FONT_FAMILY_GEORGIA: {
-    fontFamily: "Georgia, serif",
-  },
-  FONT_FAMILY_COURIER: {
-    fontFamily: "Courier New, monospace",
-  },
-};
 
 const Input = ({
   editorState,
@@ -42,7 +28,28 @@ const Input = ({
   isShowNumberedList,
   isShowBulletedList,
   sx,
-}: IInputProps) => {
+}: // fontSize,
+IInputProps) => {
+  const styleMap = {
+    // Font families
+    FONT_FAMILY_ARIAL: {
+      fontFamily: "Arial, sans-serif",
+    },
+    FONT_FAMILY_GEORGIA: {
+      fontFamily: "Georgia, serif",
+    },
+    FONT_FAMILY_COURIER: {
+      fontFamily: "Courier New, monospace",
+    },
+
+    //Font sizes
+    [`FONT_SIZE`]: {
+      fontSize: `${12}px`,
+    },
+  };
+
+  console.log(styleMap);
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
       <Box
