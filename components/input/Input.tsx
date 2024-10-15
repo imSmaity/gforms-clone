@@ -1,79 +1,73 @@
-import { Box, SxProps, Theme } from "@mui/material";
-import { Editor, EditorState } from "draft-js";
-import "draft-js/dist/Draft.css";
-import { SyntheticEvent } from "react";
+"use client";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import React, { SyntheticEvent } from "react";
 import RichTextButtons from "../richText/RichTextButtons";
 import "./style.css";
+import { Box } from "@mui/material";
+import Underline from "@tiptap/extension-underline";
+import Placeholder from "@tiptap/extension-placeholder";
+
+export enum InputVariant {
+  STANDARD = "standard",
+  OUTLINED = "outlined",
+  FILLED = "filled",
+}
 
 interface IInputProps {
-  editorState: EditorState;
-  placeholder?: string;
   active?: boolean;
-  setEditorState: (editorState: EditorState) => void;
   onBlur?: (e: SyntheticEvent) => void;
   onFocus?: (e: SyntheticEvent) => void;
-  sx?: SxProps<Theme>;
   isShowNumberedList?: boolean;
   isShowBulletedList?: boolean;
   fontSize?: number;
+  placeholder?: string;
+  variant?: InputVariant;
 }
 
 const Input = ({
-  editorState,
+  isShowBulletedList,
+  isShowNumberedList,
+  fontSize = 24,
   placeholder,
-  setEditorState,
   onBlur,
   onFocus,
   active,
-  isShowNumberedList,
-  isShowBulletedList,
-  sx,
-}: // fontSize,
-IInputProps) => {
-  const styleMap = {
-    // Font families
-    FONT_FAMILY_ARIAL: {
-      fontFamily: "Arial, sans-serif",
+  variant = InputVariant.STANDARD,
+}: IInputProps) => {
+  const editor = useEditor({
+    extensions: [StarterKit, Underline, Placeholder.configure({ placeholder })],
+    content: "",
+    editorProps: {
+      attributes: {
+        class: `${
+          variant === InputVariant.STANDARD
+            ? "standard-editor"
+            : "filled-editor"
+        } editor-font-${fontSize} ${
+          active ? "active-input" : "inactive-input"
+        }`,
+      },
     },
-    FONT_FAMILY_GEORGIA: {
-      fontFamily: "Georgia, serif",
-    },
-    FONT_FAMILY_COURIER: {
-      fontFamily: "Courier New, monospace",
-    },
+  });
 
-    //Font sizes
-    [`FONT_SIZE`]: {
-      fontSize: `${12}px`,
-    },
-  };
-
-  console.log(styleMap);
+  if (!editor) {
+    return null;
+  }
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-      <Box
-        sx={{
-          paddingBottom: "5px",
-          borderBottom: active ? "2px solid #4e6da0" : "1px solid #f2f2f2",
-          ...sx,
-        }}
-      >
-        <Editor
-          placeholder={placeholder}
-          editorState={editorState}
-          onChange={setEditorState}
-          onBlur={onBlur}
-          onFocus={onFocus}
-          customStyleMap={styleMap}
-        />
-      </Box>
+      <EditorContent
+        onBlur={onBlur}
+        onFocus={onFocus}
+        className="editor-container"
+        editor={editor}
+      />
       <Box sx={{ display: active ? "flex" : "none" }}>
         <RichTextButtons
+          editor={editor}
           isShowNumberedList={isShowNumberedList}
           isShowBulletedList={isShowBulletedList}
-          value={editorState}
-          setValue={setEditorState}
         />
       </Box>
     </Box>

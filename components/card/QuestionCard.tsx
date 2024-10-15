@@ -1,4 +1,4 @@
-import { useOutsideClick } from "@/hooks/useOutsideClick";
+// import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { SxProps, Theme } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -17,7 +17,7 @@ export default function QuestionCard({
   onBlur,
   onFocus,
 }: IQuestionCardProps) {
-  const { ref, isActive } = useOutsideClick();
+  // const { ref, isActive } = useOutsideClick();
 
   return (
     <Card
@@ -25,7 +25,6 @@ export default function QuestionCard({
       id="form-card"
       sx={{
         width: "55%",
-        py: 2,
         // borderLeft: isActive ? "5px solid #4285f4" : "0",
         borderRadius: 2,
         ...sx,

@@ -1,4 +1,4 @@
-export enum QuestionValues {
+export enum QuestionValuesTypes {
   SORT_ANSWER = "short_answer",
   PARAGRAPH = "paragraph",
   MULTIPLE_CHOICE = "multiple_choice",
