@@ -1,13 +1,15 @@
 "use client";
 import React, { useState } from "react";
-import Input from "../input/Input";
 import QuestionCard from "../card/QuestionCard";
 import { Box } from "@mui/material";
+import dynamic from "next/dynamic";
 
 interface ActiveInput {
   title: boolean;
   description: boolean;
 }
+
+const Input = dynamic(() => import("../input/Input"));
 
 const HeaderSlide = () => {
   const [activeInput, setActiveInput] = useState<ActiveInput>({

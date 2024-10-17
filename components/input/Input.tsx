@@ -49,6 +49,7 @@ const Input = ({
         }`,
       },
     },
+    immediatelyRender: false,
   });
 
   if (!editor) {

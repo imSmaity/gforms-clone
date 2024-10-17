@@ -85,8 +85,9 @@ const QuestionSlide = () => {
           <Grid item xs={2}>
             <Box
               sx={{
-                display: "flex",
+                display: activeCard ? "flex" : "none",
                 justifyContent: "center",
+                marginTop: 2,
               }}
             >
               <IconButton>
@@ -95,10 +96,12 @@ const QuestionSlide = () => {
             </Box>
           </Grid>
           <Grid item xs={4}>
-            <QuestionTypeSelector
-              value={questionType}
-              handleChange={handleChangeAnswerType}
-            />
+            <Box sx={{ display: activeCard ? "flex" : "none" }}>
+              <QuestionTypeSelector
+                value={questionType}
+                handleChange={handleChangeAnswerType}
+              />
+            </Box>
           </Grid>
         </Grid>
         <AnswerComponent questionType={questionType} />
