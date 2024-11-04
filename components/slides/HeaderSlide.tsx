@@ -1,8 +1,11 @@
 "use client";
-import React, { useState } from "react";
-import QuestionCard from "../card/QuestionCard";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { Box } from "@mui/material";
 import dynamic from "next/dynamic";
+import { useState } from "react";
+import QuestionCard from "../card/QuestionCard";
+import { JSONContent } from "@tiptap/react";
+import { setFormName } from "@/lib/redux/formSlice";
 
 interface ActiveInput {
   title: boolean;
@@ -16,6 +19,19 @@ const HeaderSlide = () => {
     title: false,
     description: false,
   });
+  const form = useAppSelector((state) => state.formSlice);
+  const dispatch = useAppDispatch();
+
+  const handleSetValue = (value: JSONContent) => {
+    if (
+      value?.content &&
+      value?.content[0].content &&
+      value?.content[0].content[0]?.text
+    ) {
+      const title = value?.content[0].content[0]?.text;
+      dispatch(setFormName({ title }));
+    }
+  };
 
   return (
     <QuestionCard
@@ -27,6 +43,8 @@ const HeaderSlide = () => {
         <Input
           placeholder="Form title"
           active={activeInput.title}
+          value={form.title}
+          setValue={handleSetValue}
           onFocus={() => setActiveInput({ title: true, description: false })}
           onBlur={() => setActiveInput((prev) => ({ ...prev, title: false }))}
         />
@@ -36,6 +54,8 @@ const HeaderSlide = () => {
           isShowNumberedList
           fontSize={14}
           active={activeInput.description}
+          value={""}
+          setValue={() => {}}
           onFocus={() => setActiveInput({ title: false, description: true })}
           onBlur={() =>
             setActiveInput((prev) => ({ ...prev, description: false }))

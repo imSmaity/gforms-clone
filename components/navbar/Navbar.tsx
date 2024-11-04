@@ -12,6 +12,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import Logo from "../logo/Logo";
 import AppTabs from "./Tabs";
+import { useAppSelector } from "@/lib/redux/hooks";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -23,6 +24,7 @@ function Navbar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+  const form = useAppSelector((state) => state.formSlice);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -47,6 +49,9 @@ function Navbar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Logo />
+          <Typography sx={{ color: "#000000", fontSize: 20 }}>
+            {form.title}
+          </Typography>
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
@@ -58,6 +63,7 @@ function Navbar() {
             >
               {/* <MenuIcon /> */}
             </IconButton>
+
             <Menu
               id="menu-appbar"
               anchorEl={anchorElNav}

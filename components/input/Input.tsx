@@ -1,12 +1,12 @@
 "use client";
-import { EditorContent, useEditor } from "@tiptap/react";
+import { Box } from "@mui/material";
+import Placeholder from "@tiptap/extension-placeholder";
+import Underline from "@tiptap/extension-underline";
+import { EditorContent, JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import React, { SyntheticEvent } from "react";
+import { SyntheticEvent } from "react";
 import RichTextButtons from "../richText/RichTextButtons";
 import "./style.css";
-import { Box } from "@mui/material";
-import Underline from "@tiptap/extension-underline";
-import Placeholder from "@tiptap/extension-placeholder";
 
 export enum InputVariant {
   STANDARD = "standard",
@@ -23,6 +23,8 @@ interface IInputProps {
   fontSize?: number;
   placeholder?: string;
   variant?: InputVariant;
+  setValue: (value: JSONContent) => void;
+  value?: string | number | readonly string[] | undefined;
 }
 
 const Input = ({
@@ -34,6 +36,8 @@ const Input = ({
   onFocus,
   active,
   variant = InputVariant.STANDARD,
+  setValue,
+  value,
 }: IInputProps) => {
   const editor = useEditor({
     extensions: [StarterKit, Underline, Placeholder.configure({ placeholder })],
@@ -50,6 +54,9 @@ const Input = ({
       },
     },
     immediatelyRender: false,
+    onUpdate({ editor }) {
+      setValue(editor.getJSON());
+    },
   });
 
   if (!editor) {
@@ -63,6 +70,7 @@ const Input = ({
         onFocus={onFocus}
         className="editor-container"
         editor={editor}
+        value={value}
       />
       <Box sx={{ display: active ? "flex" : "none" }}>
         <RichTextButtons

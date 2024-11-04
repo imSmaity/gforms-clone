@@ -1,11 +1,11 @@
 "use client";
-import { Box } from "@mui/material";
+import AddQuestion from "@/components/card/AddQuestion";
 import HeaderSlide from "@/components/slides/HeaderSlide";
 import QuestionSlide from "@/components/slides/QuestionSlide";
-import AddQuestion from "@/components/card/AddQuestion";
+import { socket } from "@/utils/socket";
+import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
 import { v1 as uuid } from "uuid";
-import { socket } from "@/utils/socket";
 
 export default function Home() {
   const [questions, setQuestions] = useState([{ id: uuid() }]);
@@ -33,12 +33,12 @@ export default function Home() {
       setTransport("N/A");
     }
 
-    // socket.on("connect", onConnect);
-    // if (socket.id)
-    //   socket.emit("join_chat", {
-    //     name: "XYZ",
-    //     id: socket.id,
-    //   });
+    socket.on("connect", onConnect);
+    if (socket.id)
+      socket.emit("join_chat", {
+        name: "XYZ",
+        id: socket.id,
+      });
     socket.on("disconnect", onDisconnect);
 
     setTimeout(() => {
