@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import QuestionCard from "../card/QuestionCard";
 import { JSONContent } from "@tiptap/react";
-import { setFormName } from "@/lib/redux/formSlice";
+import { setFormName } from "@/lib/redux/form/formSlice";
 
 interface ActiveInput {
   title: boolean;

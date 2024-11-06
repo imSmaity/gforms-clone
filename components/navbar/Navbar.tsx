@@ -13,6 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Logo from "../logo/Logo";
 import AppTabs from "./Tabs";
 import { useAppSelector } from "@/lib/redux/hooks";
+import { usePathname } from "next/navigation";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -25,6 +26,8 @@ function Navbar() {
     null
   );
   const form = useAppSelector((state) => state.formSlice);
+  const pathname = usePathname();
+  const isShowAppBar = pathname !== "/forms";
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -149,7 +152,7 @@ function Navbar() {
             </Menu>
           </Box>
         </Toolbar>
-        <AppTabs />
+        {isShowAppBar ? <AppTabs /> : null}
       </Container>
     </AppBar>
   );

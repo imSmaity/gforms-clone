@@ -1,10 +1,13 @@
 "use client";
-import React, { ReactNode } from "react";
+import StoreProvider from "@/lib/Providers/StoreProvider";
+import theme from "@/theme";
 import { ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
-import theme from "@/theme";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactNode } from "react";
 import Navbar from "../navbar/Navbar";
-import StoreProvider from "@/lib/Providers/StoreProvider";
+
+const queryClient = new QueryClient();
 
 interface ILayoutProps {
   children: ReactNode;
@@ -13,12 +16,14 @@ interface ILayoutProps {
 const Layout = ({ children }: ILayoutProps) => {
   return (
     <StoreProvider>
-      <AppRouterCacheProvider>
-        <ThemeProvider theme={theme}>
-          <Navbar />
-          {children}
-        </ThemeProvider>
-      </AppRouterCacheProvider>
+      <QueryClientProvider client={queryClient}>
+        <AppRouterCacheProvider>
+          <ThemeProvider theme={theme}>
+            <Navbar />
+            {children}
+          </ThemeProvider>
+        </AppRouterCacheProvider>
+      </QueryClientProvider>
     </StoreProvider>
   );
 };

@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import formSlice from "./formSlice";
+import formSlice from "./form/formSlice";
+import userSlice from "./user/userSlice";
 
 export const makeStore = () => {
   return configureStore({
-    reducer: { formSlice },
+    reducer: { formSlice, userSlice },
   });
 };
 
