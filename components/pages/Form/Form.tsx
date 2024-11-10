@@ -2,17 +2,38 @@
 import AddQuestion from "@/components/card/AddQuestion";
 import HeaderSlide from "@/components/slides/HeaderSlide";
 import QuestionSlide from "@/components/slides/QuestionSlide";
-import { useAppSelector } from "@/lib/redux/hooks";
+import { selectForm, STATUS } from "@/lib/redux/form/formSlice";
+import { getActiveForm } from "@/lib/redux/form/thunk";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { selectUser } from "@/lib/redux/user/userSlice";
 import { socket } from "@/utils/socket";
-import { Box, Button } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, LinearProgress } from "@mui/material";
+import { redirect, useParams } from "next/navigation";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { v1 as uuid } from "uuid";
 
 export default function Form() {
+  const user = useAppSelector(selectUser);
+  const { form, getAsyncStatus } = useAppSelector(selectForm);
+  const dispatch = useAppDispatch();
+
   const [questions, setQuestions] = useState([{ id: uuid() }]);
   const [isConnected, setIsConnected] = useState(false);
-  const [transport, setTransport] = useState("N/A");
-  const form = useAppSelector((state) => state.formSlice);
+
+  const params = useParams();
+  const formId = String(params?.id);
+  const userId = user._id;
+  const isLoading =
+    getAsyncStatus === STATUS.PENDING || getAsyncStatus === STATUS.IDLE;
+
+  useLayoutEffect(() => {
+    if (userId && formId) dispatch(getActiveForm({ _id: formId, userId }));
+  }, [userId, formId]);
+
+  if (!isLoading && !form) {
+    //if form id not found
+    redirect("/");
+  }
 
   useEffect(() => {
     if (socket.connected) {
@@ -21,16 +42,10 @@ export default function Form() {
 
     function onConnect() {
       setIsConnected(true);
-      setTransport(socket.io.engine.transport.name);
-
-      socket.io.engine.on("upgrade", (transport) => {
-        setTransport(transport.name);
-      });
     }
 
     function onDisconnect() {
       setIsConnected(false);
-      setTransport("N/A");
     }
 
     socket.on("connect", onConnect);
@@ -65,20 +80,27 @@ export default function Form() {
 
   const addQuestions = () => setQuestions([...questions, { id: uuid() }]);
 
-  const testSendMsg = () => {
-    if (isConnected) {
-      socket.emit("req_save_form", {
-        data: {
-          _id: "6729ceb8b975b3a6c2f964be",
-          userId: "6728bd60086d85311afdddfb",
-          title: form.title,
-        },
-        id: socket.id,
-      });
-    } else {
-      console.log("Socket not connected. Cannot send message.");
-    }
-  };
+  // const testSendMsg = () => {
+  //   if (isConnected) {
+  //     socket.emit("req_save_form", {
+  //       data: {
+  //         _id: formId,
+  //         userId: userId,
+  //         title: form?.title,
+  //       },
+  //       id: socket.id,
+  //     });
+  //   } else {
+  //     console.log("Socket not connected. Cannot send message.");
+  //   }
+  // };
+
+  if (isLoading)
+    return (
+      <Box sx={{ pt: 15 }}>
+        <LinearProgress />
+      </Box>
+    );
 
   return (
     <div>
@@ -92,7 +114,7 @@ export default function Form() {
             gap: 2,
           }}
         >
-          <HeaderSlide />
+          <HeaderSlide title="" />
           {questions.map((question) => (
             <QuestionSlide key={question.id} />
           ))}
@@ -100,7 +122,6 @@ export default function Form() {
             <AddQuestion handleAddQuestions={addQuestions} />
           </Box>
         </Box>
-        <Button onClick={testSendMsg}>Submit...</Button>
       </main>
     </div>
   );

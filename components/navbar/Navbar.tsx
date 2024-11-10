@@ -14,6 +14,7 @@ import Logo from "../logo/Logo";
 import AppTabs from "./Tabs";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { usePathname } from "next/navigation";
+import { selectForm } from "@/lib/redux/form/formSlice";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -25,7 +26,7 @@ function Navbar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-  const form = useAppSelector((state) => state.formSlice);
+  const { form } = useAppSelector(selectForm);
   const pathname = usePathname();
   const isShowAppBar = pathname !== "/forms";
 
@@ -53,7 +54,7 @@ function Navbar() {
         <Toolbar disableGutters>
           <Logo />
           <Typography sx={{ color: "#000000", fontSize: 20 }}>
-            {form.title}
+            {form?.title}
           </Typography>
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -123,7 +124,10 @@ function Navbar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar
+                  alt="Remy Sharp"
+                  src="https://api.dicebear.com/9.x/initials/svg?seed=SumanMaity"
+                />
               </IconButton>
             </Tooltip>
             <Menu

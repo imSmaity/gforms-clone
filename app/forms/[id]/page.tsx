@@ -1,4 +1,4 @@
-import Form from "@/components/pages/Forms/Form";
+import Form from "@/components/pages/Form/Form";
 import React from "react";
 
 const FormPage = () => {

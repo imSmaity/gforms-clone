@@ -1,26 +1,30 @@
 "use client";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { useAppSelector } from "@/lib/redux/hooks";
 import { Box } from "@mui/material";
+import { JSONContent } from "@tiptap/react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import QuestionCard from "../card/QuestionCard";
-import { JSONContent } from "@tiptap/react";
-import { setFormName } from "@/lib/redux/form/formSlice";
 
 interface ActiveInput {
   title: boolean;
   description: boolean;
 }
 
+interface IHeaderSlideProps {
+  title: string;
+  description?: string;
+}
+
 const Input = dynamic(() => import("../input/Input"));
 
-const HeaderSlide = () => {
+const HeaderSlide = ({ title }: IHeaderSlideProps) => {
   const [activeInput, setActiveInput] = useState<ActiveInput>({
     title: false,
     description: false,
   });
+
   const form = useAppSelector((state) => state.formSlice);
-  const dispatch = useAppDispatch();
 
   const handleSetValue = (value: JSONContent) => {
     if (
@@ -28,8 +32,8 @@ const HeaderSlide = () => {
       value?.content[0].content &&
       value?.content[0].content[0]?.text
     ) {
-      const title = value?.content[0].content[0]?.text;
-      dispatch(setFormName({ title }));
+      // const title = value?.content[0].content[0]?.text;
+      console.log(title);
     }
   };
 

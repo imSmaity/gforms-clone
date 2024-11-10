@@ -21,4 +21,14 @@ export default {
         .catch((error) => reject(error));
     });
   },
+  getForm({ _id, userId }: { _id: string; userId: string }) {
+    return new Promise((resolve, reject) => {
+      axiosInstance
+        .get(apiConfig.FORM.BASE.concat(`?_id=${_id}&userId=${userId}`))
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => reject(error));
+    });
+  },
 };

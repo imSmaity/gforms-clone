@@ -3,4 +3,7 @@ export const apiConfig = {
   FORMS: {
     BASE: "forms",
   },
+  FORM: {
+    BASE: "form",
+  },
 };
