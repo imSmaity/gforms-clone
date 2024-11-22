@@ -6,18 +6,30 @@ import { selectUser } from "@/lib/redux/user/userSlice";
 import { Box } from "@mui/material";
 import FormCard from "@/components/card/FormCard";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { IForm } from "@/lib/redux/form/types";
 
 const Forms = () => {
   const user = useAppSelector(selectUser);
+  const [data, setData] = useState<IForm[] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { isLoading, data } = useQuery({
-    queryKey: [user?._id],
-    queryFn: () => {
-      if (!user._id) return Promise.reject("User not found");
-      else return Api.getForms({ userId: user._id });
-    },
-  });
+  // const { isLoading, data } = useQuery({
+  //   queryKey: [user?._id],
+  //   queryFn: () => {
+  //     if (!user._id) return Promise.reject("User not found");
+  //     else return Api.getForms({ userId: user._id });
+  //   },
+  // });
   //use react query
+
+  useEffect(() => {
+    Api.getForms({ userId: user._id })
+      .then((res: any) => {
+        setData(res.data);
+      })
+      .catch(console.log);
+  }, []);
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -30,10 +42,10 @@ const Forms = () => {
         gap: 2,
       }}
     >
-      {data?.data?.map((form) => (
+      {data?.map((form) => (
         <Link
           href={`/forms/${form?._id}`}
-          key={form}
+          key={form._id}
           style={{ textDecoration: "none" }}
         >
           <FormCard title={form?.title} />
