@@ -1,11 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
-import { getActiveForm } from "./thunk";
-import { IForm } from "./types";
+import {
+  autoSave,
+  getActiveForm,
+  getFormQuestions,
+  saveFormQuestion,
+} from "./thunk";
+import { IForm, IQuestion, IQuestions } from "./types";
 
 interface FormState {
   form: IForm | null;
+  questions: IQuestions | null;
   getAsyncStatus: string;
+  asyncSaveForm: string;
+  getQuestionsAsync: string;
+  asyncSaveQuestion: string;
 }
 
 export const STATUS = {
@@ -17,7 +26,11 @@ export const STATUS = {
 
 const initialState: FormState = {
   form: null,
+  questions: null,
   getAsyncStatus: STATUS.IDLE,
+  asyncSaveForm: STATUS.IDLE,
+  getQuestionsAsync: STATUS.IDLE,
+  asyncSaveQuestion: STATUS.IDLE,
 };
 
 export const formSlice = createSlice({
@@ -36,6 +49,37 @@ export const formSlice = createSlice({
     });
     builder.addCase(getActiveForm.rejected, (state) => {
       state.getAsyncStatus = STATUS.REJECTED;
+    });
+    // form header auto save
+    builder.addCase(autoSave.pending, (state) => {
+      state.asyncSaveForm = STATUS.PENDING;
+    });
+    builder.addCase(autoSave.fulfilled, (state, action) => {
+      state.asyncSaveForm = STATUS.FULFILLED;
+    });
+    builder.addCase(autoSave.rejected, (state) => {
+      state.asyncSaveForm = STATUS.REJECTED;
+    });
+    //get active form questions
+    builder.addCase(getFormQuestions.pending, (state) => {
+      state.getQuestionsAsync = STATUS.PENDING;
+    });
+    builder.addCase(getFormQuestions.fulfilled, (state, action) => {
+      if (action.payload) state.questions = action.payload.data;
+      state.getQuestionsAsync = STATUS.FULFILLED;
+    });
+    builder.addCase(getFormQuestions.rejected, (state) => {
+      state.getQuestionsAsync = STATUS.REJECTED;
+    });
+    // form question auto save
+    builder.addCase(saveFormQuestion.pending, (state) => {
+      state.asyncSaveQuestion = STATUS.PENDING;
+    });
+    builder.addCase(saveFormQuestion.fulfilled, (state) => {
+      state.asyncSaveQuestion = STATUS.FULFILLED;
+    });
+    builder.addCase(saveFormQuestion.rejected, (state) => {
+      state.asyncSaveQuestion = STATUS.REJECTED;
     });
   },
 });

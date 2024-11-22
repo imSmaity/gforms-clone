@@ -1,14 +1,10 @@
 import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
+import { IOption } from "@/lib/redux/form/types";
+import { answerTypes } from "@/config/constant";
 
-interface IOption {
-  name: string;
-  value: string;
-  isOtherOption?: boolean;
-}
-
-const initialOptions: IOption[] = [
+const initialOptions = [
   {
     name: "option1",
     value: "Option 1",
@@ -26,8 +22,29 @@ const RadioButtonCircle = () => (
   ></Box>
 );
 
-const MultipleChoice = () => {
-  const [options, setOptions] = useState<IOption[]>(initialOptions);
+const Checkbox = () => (
+  <Box
+    sx={{
+      border: "2px solid #adb5bd",
+      width: 15,
+      height: 15,
+      borderRadius: "15%",
+    }}
+  ></Box>
+);
+
+interface IMultipleChoiceProps {
+  storedOptions: IOption[];
+  type?: string;
+}
+
+const MultipleChoice = ({
+  storedOptions,
+  type = answerTypes.MULTIPLE_CHOICE,
+}: IMultipleChoiceProps) => {
+  const [options, setOptions] = useState<IOption[]>(
+    storedOptions || initialOptions
+  );
 
   const isOtherOptionFound = (): IOption | null => {
     let foundOption: IOption | null = null;
@@ -55,8 +72,8 @@ const MultipleChoice = () => {
     setOptions([...options, newOption]);
   };
 
-  const handleDeleteOption = (name: string) => {
-    const newOptions = options.filter((option) => option.name !== name);
+  const handleDeleteOption = (_id: string) => {
+    const newOptions = options.filter((option) => option._id !== _id);
     setOptions([...newOptions]);
   };
 
@@ -69,8 +86,10 @@ const MultipleChoice = () => {
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       {radioButtonOptions.map((option) => (
         <Option
-          key={option.name}
-          name={option.name}
+          key={option._id}
+          _id={option._id}
+          type={type}
+          name={option.value}
           value={option.value}
           handleDeleteOption={handleDeleteOption}
           isShowDelete={radioButtonOptions.length > 1}
@@ -78,7 +97,8 @@ const MultipleChoice = () => {
       ))}
       {inputButtonOption ? (
         <Option
-          name={inputButtonOption?.name}
+          type={type}
+          name={inputButtonOption.value}
           value={inputButtonOption.value}
           handleDeleteOption={handleDeleteOption}
           isOtherOption
@@ -92,7 +112,11 @@ const MultipleChoice = () => {
           alignItems: "center",
         }}
       >
-        <RadioButtonCircle />
+        {type === answerTypes.MULTIPLE_CHOICE ? (
+          <RadioButtonCircle />
+        ) : (
+          <Checkbox />
+        )}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Typography
             sx={{
@@ -120,16 +144,20 @@ const MultipleChoice = () => {
 };
 
 interface IOptionProps {
-  name: string;
+  _id?: string;
+  name?: string;
   value: string;
+  type: string;
   handleDeleteOption: (name: string) => void;
   isOtherOption?: boolean;
   isShowDelete?: boolean;
 }
 
 const Option = ({
+  _id,
   name,
   value,
+  type,
   handleDeleteOption,
   isOtherOption,
   isShowDelete,
@@ -149,7 +177,11 @@ const Option = ({
         width: "100%",
       }}
     >
-      <RadioButtonCircle />
+      {type === answerTypes.MULTIPLE_CHOICE ? (
+        <RadioButtonCircle />
+      ) : (
+        <Checkbox />
+      )}
       {isOtherOption ? (
         <Box
           sx={{
@@ -170,7 +202,7 @@ const Option = ({
       )}
     </Box>
     <Box sx={{ display: isShowDelete ? "flex" : "none" }}>
-      <IconButton onClick={() => handleDeleteOption(name)}>
+      <IconButton onClick={() => _id && handleDeleteOption(_id)}>
         <ClearIcon />
       </IconButton>
     </Box>

@@ -24,6 +24,7 @@
     "@tiptap/react": "^2.7.2",
     "@tiptap/starter-kit": "^2.7.2",
     "axios": "^1.7.7",
+    "lodash": "^4.17.21",
     "next": "14.2.11",
     "react": "^18",
     "react-dom": "^18",
@@ -33,6 +34,7 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.13",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -40,6 +42,8 @@
     "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.11",
+    "i": "^0.3.7",
+    "npm": "^10.9.0",
     "typescript": "^5"
   }
 }

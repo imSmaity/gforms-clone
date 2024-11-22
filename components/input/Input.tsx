@@ -2,7 +2,7 @@
 import { Box } from "@mui/material";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
-import { EditorContent, JSONContent, useEditor } from "@tiptap/react";
+import { Content, EditorContent, JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { SyntheticEvent } from "react";
 import RichTextButtons from "../richText/RichTextButtons";
@@ -24,7 +24,7 @@ interface IInputProps {
   placeholder?: string;
   variant?: InputVariant;
   setValue: (value: JSONContent) => void;
-  value?: string | number | readonly string[] | undefined;
+  value?: string | number | readonly string[] | any | undefined;
 }
 
 const Input = ({
@@ -41,7 +41,7 @@ const Input = ({
 }: IInputProps) => {
   const editor = useEditor({
     extensions: [StarterKit, Underline, Placeholder.configure({ placeholder })],
-    content: "",
+    content: value ? value : "",
     editorProps: {
       attributes: {
         class: `${
@@ -56,6 +56,7 @@ const Input = ({
     immediatelyRender: false,
     onUpdate({ editor }) {
       setValue(editor.getJSON());
+      console.log(editor.getJSON());
     },
   });
 

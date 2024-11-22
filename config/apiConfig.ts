@@ -5,5 +5,11 @@ export const apiConfig = {
   },
   FORM: {
     BASE: "form",
+    SAVE: {
+      BASE: "/save",
+    },
+  },
+  QUESTION: {
+    BASE: "/question",
   },
 };

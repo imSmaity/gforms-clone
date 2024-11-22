@@ -1,5 +1,5 @@
 "use client";
-import { useAppSelector } from "@/lib/redux/hooks";
+import { useAppDispatch } from "@/lib/redux/hooks";
 import { Box } from "@mui/material";
 import { JSONContent } from "@tiptap/react";
 import dynamic from "next/dynamic";
@@ -12,30 +12,23 @@ interface ActiveInput {
 }
 
 interface IHeaderSlideProps {
-  title: string;
+  header?: string;
   description?: string;
+  handleSetValue: (name: string, value: JSONContent) => void;
 }
 
 const Input = dynamic(() => import("../input/Input"));
 
-const HeaderSlide = ({ title }: IHeaderSlideProps) => {
+const HeaderSlide = ({
+  header,
+  description,
+  handleSetValue,
+}: IHeaderSlideProps) => {
+  const dispatch = useAppDispatch();
   const [activeInput, setActiveInput] = useState<ActiveInput>({
     title: false,
     description: false,
   });
-
-  const form = useAppSelector((state) => state.formSlice);
-
-  const handleSetValue = (value: JSONContent) => {
-    if (
-      value?.content &&
-      value?.content[0].content &&
-      value?.content[0].content[0]?.text
-    ) {
-      // const title = value?.content[0].content[0]?.text;
-      console.log(title);
-    }
-  };
 
   return (
     <QuestionCard
@@ -47,8 +40,8 @@ const HeaderSlide = ({ title }: IHeaderSlideProps) => {
         <Input
           placeholder="Form title"
           active={activeInput.title}
-          value={form.title}
-          setValue={handleSetValue}
+          value={header}
+          setValue={(value) => handleSetValue("header", value)}
           onFocus={() => setActiveInput({ title: true, description: false })}
           onBlur={() => setActiveInput((prev) => ({ ...prev, title: false }))}
         />
@@ -58,8 +51,8 @@ const HeaderSlide = ({ title }: IHeaderSlideProps) => {
           isShowNumberedList
           fontSize={14}
           active={activeInput.description}
-          value={""}
-          setValue={() => {}}
+          value={description}
+          setValue={(value) => handleSetValue("description", value)}
           onFocus={() => setActiveInput({ title: false, description: true })}
           onBlur={() =>
             setActiveInput((prev) => ({ ...prev, description: false }))

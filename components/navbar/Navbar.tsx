@@ -14,7 +14,9 @@ import Logo from "../logo/Logo";
 import AppTabs from "./Tabs";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { usePathname } from "next/navigation";
-import { selectForm } from "@/lib/redux/form/formSlice";
+import { selectForm, STATUS } from "@/lib/redux/form/formSlice";
+import CloudSyncOutlinedIcon from "@mui/icons-material/CloudSyncOutlined";
+import CloudDoneOutlinedIcon from "@mui/icons-material/CloudDoneOutlined";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -26,7 +28,7 @@ function Navbar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-  const { form } = useAppSelector(selectForm);
+  const { form, asyncSaveForm } = useAppSelector(selectForm);
   const pathname = usePathname();
   const isShowAppBar = pathname !== "/forms";
 
@@ -45,6 +47,8 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
+  const isFormSaving = asyncSaveForm === STATUS.PENDING;
+
   return (
     <AppBar
       color="default"
@@ -52,10 +56,17 @@ function Navbar() {
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Logo />
-          <Typography sx={{ color: "#000000", fontSize: 20 }}>
-            {form?.title}
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Logo />
+            <Typography sx={{ color: "#000000", fontSize: 20 }}>
+              {form?.title}
+            </Typography>
+            {isFormSaving ? (
+              <CloudSyncOutlinedIcon />
+            ) : (
+              <CloudDoneOutlinedIcon />
+            )}
+          </Box>
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
