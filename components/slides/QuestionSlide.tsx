@@ -18,30 +18,51 @@ import CheckboxGrid from "../card/AnswerCards/CheckboxGrid";
 import Date from "../card/AnswerCards/Date";
 import Time from "../card/AnswerCards/Time";
 import CardFooter from "../card/CardFooter";
-import { IOption } from "@/lib/redux/form/types";
+import { IOption, IQuestion } from "@/lib/redux/form/types";
+import { JSONContent } from "@tiptap/react";
 
 interface IAnswerComponentProps {
   questionType: string;
   options?: IOption[];
+  setOptions?: (options: IOption[]) => void;
 }
 
 interface IQuestionSlideProps {
-  value: string;
+  _id?: string;
+  label: JSONContent;
+  value: JSONContent;
   type: string;
   options?: IOption[];
+  handleSaveQuestion: ({
+    _id,
+    data,
+  }: {
+    _id?: string;
+    data: IQuestion;
+  }) => void;
 }
 
-const AnswerComponent = ({ questionType, options }: IAnswerComponentProps) => {
+const AnswerComponent = ({
+  questionType,
+  options,
+  setOptions,
+}: IAnswerComponentProps) => {
   switch (questionType) {
     case AnswerTypes.SORT_ANSWER:
       return <ShortAnswer />;
     case AnswerTypes.PARAGRAPH:
       return <Paragraph />;
     case AnswerTypes.MULTIPLE_CHOICE:
-      return options ? <MultipleChoice storedOptions={options} /> : null;
+      return options ? (
+        <MultipleChoice options={options} setOptions={setOptions} />
+      ) : null;
     case AnswerTypes.CHECKBOXES:
       return options ? (
-        <MultipleChoice storedOptions={options} type={answerTypes.CHECKBOXES} />
+        <MultipleChoice
+          options={options}
+          setOptions={setOptions}
+          type={answerTypes.CHECKBOXES}
+        />
       ) : null;
     case AnswerTypes.DROPDOWN:
       return <Dropdown />;
@@ -62,15 +83,53 @@ const AnswerComponent = ({ questionType, options }: IAnswerComponentProps) => {
   }
 };
 
-const QuestionSlide = ({ type, value, options }: IQuestionSlideProps) => {
+const QuestionSlide = ({
+  _id,
+  type,
+  label,
+  value,
+  options,
+  handleSaveQuestion,
+}: IQuestionSlideProps) => {
+  const initialOptions = options ? options : [];
   const [activeInput, setActiveInput] = useState<boolean>(false);
   const [activeCard, setActiveCard] = useState<boolean>(false);
+  const [questionLabel, setQuestionLabel] = useState<JSONContent>(label);
+  const [questionOptions, setQuestionOptions] =
+    useState<IOption[]>(initialOptions);
   const [questionType, setQuestionType] = useState(
     type || AnswerTypes.MULTIPLE_CHOICE
   );
 
-  const handleChangeAnswerType = (event: SelectChangeEvent<string>) => {
-    setQuestionType(event.target.value);
+  const handleSetLabel = (label: JSONContent) => {
+    setQuestionLabel(label);
+    const data: IQuestion = {
+      label,
+      type: questionType,
+      options: questionOptions,
+    };
+    handleSaveQuestion({ _id, data });
+  };
+
+  const handleSetType = (event: SelectChangeEvent<string>) => {
+    const type = event.target.value;
+    setQuestionType(type);
+    const data: IQuestion = {
+      label: questionLabel,
+      type,
+      options: questionOptions,
+    };
+    handleSaveQuestion({ _id, data });
+  };
+
+  const handleSetOptions = (options: IOption[]) => {
+    setQuestionOptions(options);
+    const data: IQuestion = {
+      label: questionLabel,
+      type: questionType,
+      options,
+    };
+    handleSaveQuestion({ _id, data });
   };
 
   return (
@@ -89,7 +148,7 @@ const QuestionSlide = ({ type, value, options }: IQuestionSlideProps) => {
               isShowBulletedList
               isShowNumberedList
               value={value}
-              setValue={() => {}}
+              setValue={handleSetLabel}
               fontSize={14}
               active={activeInput}
               onFocus={() => setActiveInput(true)}
@@ -113,12 +172,16 @@ const QuestionSlide = ({ type, value, options }: IQuestionSlideProps) => {
             <Box sx={{ display: activeCard ? "flex" : "none" }}>
               <QuestionTypeSelector
                 value={questionType}
-                handleChange={handleChangeAnswerType}
+                handleChange={handleSetType}
               />
             </Box>
           </Grid>
         </Grid>
-        <AnswerComponent questionType={questionType} options={options} />
+        <AnswerComponent
+          questionType={questionType}
+          options={questionOptions}
+          setOptions={handleSetOptions}
+        />
         {activeCard ? <CardFooter /> : null}
       </Box>
     </QuestionCard>

@@ -1,5 +1,5 @@
 import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 import { IOption } from "@/lib/redux/form/types";
 import { answerTypes } from "@/config/constant";
@@ -34,18 +34,16 @@ const Checkbox = () => (
 );
 
 interface IMultipleChoiceProps {
-  storedOptions: IOption[];
+  options: IOption[];
+  setOptions?: (options: IOption[]) => void;
   type?: string;
 }
 
 const MultipleChoice = ({
-  storedOptions,
+  options,
+  setOptions,
   type = answerTypes.MULTIPLE_CHOICE,
 }: IMultipleChoiceProps) => {
-  const [options, setOptions] = useState<IOption[]>(
-    storedOptions || initialOptions
-  );
-
   const isOtherOptionFound = (): IOption | null => {
     let foundOption: IOption | null = null;
     options.forEach((option) => {
@@ -57,7 +55,7 @@ const MultipleChoice = ({
     return foundOption;
   };
 
-  const handleAddOption = (other?: boolean) => {
+  const handleAddOption = (other?: string) => {
     const newOption: IOption = {
       name: `option${
         isOtherOptionFound() ? options.length : options.length + 1
@@ -67,20 +65,37 @@ const MultipleChoice = ({
         : `Option ${
             isOtherOptionFound() ? options.length : options.length + 1
           }`,
-      isOtherOption: other,
+      isOtherOption: Boolean(other),
     };
-    setOptions([...options, newOption]);
+    if (setOptions) setOptions([...options, newOption]);
   };
 
   const handleDeleteOption = (_id: string) => {
     const newOptions = options.filter((option) => option._id !== _id);
-    setOptions([...newOptions]);
+    if (setOptions) setOptions([...newOptions]);
   };
 
   const radioButtonOptions: IOption[] = options.filter(
     (option) => !option.isOtherOption
   );
   const inputButtonOption: IOption | null = isOtherOptionFound();
+
+  const handleOptionValueChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    _id: string
+  ) => {
+    const value = e.target.value;
+    const currentOptions = new Array(...options);
+    const newOptions = currentOptions?.map((option) => {
+      if (option._id == _id) {
+        return { ...option, value };
+      }
+
+      return option;
+    });
+
+    if (setOptions) setOptions([...newOptions]);
+  };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -91,6 +106,7 @@ const MultipleChoice = ({
           type={type}
           name={option.value}
           value={option.value}
+          handleOptionValueChange={handleOptionValueChange}
           handleDeleteOption={handleDeleteOption}
           isShowDelete={radioButtonOptions.length > 1}
         />
@@ -133,7 +149,7 @@ const MultipleChoice = ({
               <Typography>or</Typography>
               <Button
                 sx={{ textTransform: "none" }}
-                onClick={() => handleAddOption(true)}
+                onClick={() => handleAddOption("other")}
               >{`Add "Other"`}</Button>
             </>
           ) : null}
@@ -151,6 +167,10 @@ interface IOptionProps {
   handleDeleteOption: (name: string) => void;
   isOtherOption?: boolean;
   isShowDelete?: boolean;
+  handleOptionValueChange?: (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    _id: string
+  ) => void;
 }
 
 const Option = ({
@@ -161,6 +181,7 @@ const Option = ({
   handleDeleteOption,
   isOtherOption,
   isShowDelete,
+  handleOptionValueChange,
 }: IOptionProps) => (
   <Box
     sx={{
@@ -197,6 +218,10 @@ const Option = ({
           variant="standard"
           name={name}
           value={value}
+          onChange={(event) => {
+            if (handleOptionValueChange)
+              handleOptionValueChange(event, String(_id));
+          }}
           sx={{ width: "95%" }}
         />
       )}

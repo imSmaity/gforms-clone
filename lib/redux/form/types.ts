@@ -1,3 +1,4 @@
+import { JSONContent } from "@tiptap/react";
 export interface IForm {
   _id: string;
   userId: string;
@@ -15,15 +16,12 @@ export interface IOption {
 }
 export interface IQuestion {
   _id?: string;
+  formId?: string;
+  userId?: string;
   tempId?: string;
   type: string;
-  label: string;
+  label: JSONContent;
   options: IOption[];
-}
-
-export interface IQuestions {
-  _id?: string;
-  fields: IQuestion[];
 }
 
 export interface ISaveFormAsync {
@@ -33,13 +31,12 @@ export interface ISaveFormAsync {
 }
 
 export interface IGetQuestionsAsync {
-  _id: string;
   formId: string;
 }
 
 export interface ISaveQuestionAsync {
-  _id: string;
+  _id?: string;
   userId: string;
-  fieldId?: string;
+  formId: string;
   data: IQuestion;
 }

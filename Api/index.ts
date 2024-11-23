@@ -50,14 +50,12 @@ export default {
         .catch((error) => reject(error));
     });
   },
-  getQuestions({ _id, formId }: IGetQuestionsAsync) {
+  getQuestions({ formId }: IGetQuestionsAsync) {
     return new Promise((resolve, reject) => {
       axiosInstance
         .get(
           FORM.BASE.concat(
-            FORM.SAVE.BASE.concat(
-              QUESTION.BASE.concat(`?_id=${_id}&formId=${formId}`)
-            )
+            FORM.SAVE.BASE.concat(QUESTION.BASE.concat(`?formId=${formId}`))
           )
         )
         .then((res) => {

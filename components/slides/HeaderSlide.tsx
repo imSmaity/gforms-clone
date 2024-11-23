@@ -1,5 +1,4 @@
 "use client";
-import { useAppDispatch } from "@/lib/redux/hooks";
 import { Box } from "@mui/material";
 import { JSONContent } from "@tiptap/react";
 import dynamic from "next/dynamic";
@@ -24,7 +23,6 @@ const HeaderSlide = ({
   description,
   handleSetValue,
 }: IHeaderSlideProps) => {
-  const dispatch = useAppDispatch();
   const [activeInput, setActiveInput] = useState<ActiveInput>({
     title: false,
     description: false,

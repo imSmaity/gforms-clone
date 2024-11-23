@@ -3,7 +3,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   IForm,
   IGetQuestionsAsync,
-  IQuestions,
+  IQuestion,
   ISaveFormAsync,
   ISaveQuestionAsync,
 } from "./types";
@@ -25,13 +25,13 @@ export const autoSave = createAsyncThunk(
 export const getFormQuestions = createAsyncThunk(
   "form/questions",
   async (data: IGetQuestionsAsync) => {
-    return (await Api.getQuestions(data)) as { data: IQuestions };
+    return (await Api.getQuestions(data)) as { data: IQuestion[] };
   }
 );
 
 export const saveFormQuestion = createAsyncThunk(
   "form/question/autoSave",
   async (data: ISaveQuestionAsync) => {
-    return (await Api.saveQuestion(data)) as { data: IQuestions | IForm };
+    return (await Api.saveQuestion(data)) as { data: IQuestion[] | IForm };
   }
 );

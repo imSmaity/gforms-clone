@@ -7,6 +7,7 @@ import {
   autoSave,
   getActiveForm,
   getFormQuestions,
+  saveFormQuestion,
 } from "@/lib/redux/form/thunk";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { selectUser } from "@/lib/redux/user/userSlice";
@@ -17,22 +18,19 @@ import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { v1 as uuid } from "uuid";
 import { JSONContent } from "@tiptap/react";
 import _ from "lodash";
-import { IQuestion } from "@/lib/redux/form/types";
+import { IQuestion, ISaveQuestionAsync } from "@/lib/redux/form/types";
 
 export default function Form() {
   const user = useAppSelector(selectUser);
   const { form, getAsyncStatus, questions } = useAppSelector(selectForm);
   const dispatch = useAppDispatch();
 
-  const [activeQuestions, setActiveQuestions] = useState<
-    IQuestion[] | undefined
-  >(questions?.fields);
-
-  console.log(questions);
+  const [activeQuestions, setActiveQuestions] = useState<IQuestion[] | null>(
+    questions
+  );
 
   const params = useParams();
   const formId = String(params?.id);
-  const questionsRef = form?.questions;
   const userId = user._id;
   const isLoading =
     getAsyncStatus === STATUS.PENDING || getAsyncStatus === STATUS.IDLE;
@@ -44,14 +42,14 @@ export default function Form() {
   }, []);
 
   useLayoutEffect(() => {
-    if (questionsRef && formId && !questions) {
-      dispatch(getFormQuestions({ _id: questionsRef, formId }));
+    if (formId && !questions) {
+      dispatch(getFormQuestions({ formId }));
     }
 
-    if (questions?.fields && !activeQuestions) {
-      setActiveQuestions(questions.fields);
+    if (questions && !activeQuestions) {
+      setActiveQuestions(questions);
     }
-  }, [questionsRef, questions?.fields]);
+  }, [questions]);
 
   if (!isLoading && !form) {
     //if form id not found
@@ -59,11 +57,13 @@ export default function Form() {
   }
 
   const addQuestions = () => {
+    const initialData = { label: {}, options: [], type: "multiple_choice" };
     if (Array.isArray(activeQuestions))
       setActiveQuestions([
         ...activeQuestions,
-        { tempId: uuid(), label: "", options: [], type: "multiple_choice" },
+        { tempId: uuid(), ...initialData },
       ]);
+    dispatch(saveFormQuestion({ userId, formId, data: initialData }));
   };
 
   const handleSave = useCallback(
@@ -79,11 +79,30 @@ export default function Form() {
         header: name === "header" ? value : form?.header,
         description: name === "description" ? value : form?.description,
       };
-      // const title = value?.content[0].content[0]?.text;
-      console.log(value);
       handleSave(data);
     }
   };
+
+  const handleChangeQuestionData = ({
+    _id,
+    data,
+  }: {
+    _id?: string;
+    data: IQuestion;
+  }) => {
+    const submittingData: ISaveQuestionAsync = {
+      _id,
+      userId: userId,
+      formId: formId,
+      data,
+    };
+    handleSaveQuestion(submittingData);
+  };
+
+  const handleSaveQuestion = useCallback(
+    _.debounce((data) => dispatch(saveFormQuestion(data)), 1000),
+    []
+  );
 
   if (isLoading)
     return (
@@ -111,10 +130,13 @@ export default function Form() {
           />
           {activeQuestions?.map((question) => (
             <QuestionSlide
+              _id={question._id}
+              label={question.label}
               key={question._id || question?.tempId}
               type={question.type}
               value={question.label}
               options={question.options}
+              handleSaveQuestion={handleChangeQuestionData}
             />
           ))}
           <Box sx={{ position: "fixed", left: "78%", bottom: 10 }}>

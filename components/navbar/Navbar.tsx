@@ -28,7 +28,7 @@ function Navbar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-  const { form, asyncSaveForm } = useAppSelector(selectForm);
+  const { form, asyncSaveForm, asyncSaveQuestion } = useAppSelector(selectForm);
   const pathname = usePathname();
   const isShowAppBar = pathname !== "/forms";
 
@@ -47,7 +47,8 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
-  const isFormSaving = asyncSaveForm === STATUS.PENDING;
+  const isFormSaving =
+    asyncSaveForm === STATUS.PENDING || asyncSaveQuestion == STATUS.PENDING;
 
   return (
     <AppBar

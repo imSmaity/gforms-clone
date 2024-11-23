@@ -6,11 +6,11 @@ import {
   getFormQuestions,
   saveFormQuestion,
 } from "./thunk";
-import { IForm, IQuestion, IQuestions } from "./types";
+import { IForm, IQuestion } from "./types";
 
 interface FormState {
   form: IForm | null;
-  questions: IQuestions | null;
+  questions: IQuestion[] | null;
   getAsyncStatus: string;
   asyncSaveForm: string;
   getQuestionsAsync: string;
@@ -75,7 +75,8 @@ export const formSlice = createSlice({
     builder.addCase(saveFormQuestion.pending, (state) => {
       state.asyncSaveQuestion = STATUS.PENDING;
     });
-    builder.addCase(saveFormQuestion.fulfilled, (state) => {
+    builder.addCase(saveFormQuestion.fulfilled, (state, action) => {
+      console.log(action.payload);
       state.asyncSaveQuestion = STATUS.FULFILLED;
     });
     builder.addCase(saveFormQuestion.rejected, (state) => {
