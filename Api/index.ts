@@ -4,9 +4,10 @@ import {
   ISaveFormAsync,
   ISaveQuestionAsync,
 } from "@/lib/redux/form/types";
+import { IGetAnswersAsync } from "@/lib/redux/responder/types";
 import Axios from "axios";
 
-const { FORMS, FORM, QUESTION } = apiConfig;
+const { FORMS, FORM, QUESTION, ANSWER } = apiConfig;
 
 const axiosInstance = Axios.create({
   baseURL: apiConfig.baseURL,
@@ -68,6 +69,22 @@ export default {
     return new Promise((resolve, reject) => {
       axiosInstance
         .post(FORM.BASE.concat(FORM.SAVE.BASE.concat(QUESTION.BASE)), data)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => reject(error));
+    });
+  },
+  getAnswers({ formId, userId }: IGetAnswersAsync) {
+    return new Promise((resolve, reject) => {
+      axiosInstance
+        .get(
+          FORM.BASE.concat(
+            FORM.SAVE.BASE.concat(
+              ANSWER.BASE.concat(`?formId=${formId}&userId=${userId}`)
+            )
+          )
+        )
         .then((res) => {
           resolve(res.data);
         })

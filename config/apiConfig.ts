@@ -12,4 +12,7 @@ export const apiConfig = {
   QUESTION: {
     BASE: "/question",
   },
+  ANSWER: {
+    BASE: "/answer",
+  },
 };
