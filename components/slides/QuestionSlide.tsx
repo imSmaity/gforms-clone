@@ -20,6 +20,10 @@ import Time from "../card/AnswerCards/Time";
 import CardFooter from "../card/CardFooter";
 import { IOption, IQuestion } from "@/lib/redux/form/types";
 import { JSONContent } from "@tiptap/react";
+import { deleteQuestionUtil } from "@/utils/deleteQuestion";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { selectForm, updateQuestions } from "@/lib/redux/form/formSlice";
+import Api from "@/Api";
 
 interface IAnswerComponentProps {
   questionType: string;
@@ -28,18 +32,12 @@ interface IAnswerComponentProps {
 }
 
 interface IQuestionSlideProps {
-  _id?: string;
+  _id: string;
   label: JSONContent;
   value: JSONContent;
   type: string;
   options?: IOption[];
-  handleSaveQuestion: ({
-    _id,
-    data,
-  }: {
-    _id?: string;
-    data: IQuestion;
-  }) => void;
+  handleSaveQuestion: ({ _id, data }: { _id: string; data: IQuestion }) => void;
 }
 
 const AnswerComponent = ({
@@ -65,7 +63,13 @@ const AnswerComponent = ({
         />
       ) : null;
     case AnswerTypes.DROPDOWN:
-      return <Dropdown />;
+      return options ? (
+        <MultipleChoice
+          options={options}
+          setOptions={setOptions}
+          type={answerTypes.DROPDOWN}
+        />
+      ) : null;
     case AnswerTypes.FILE_UPLOAD:
       return <FileUpload />;
     case AnswerTypes.LINEAR_SCALE:
@@ -91,9 +95,11 @@ const QuestionSlide = ({
   options,
   handleSaveQuestion,
 }: IQuestionSlideProps) => {
+  const { form, questions } = useAppSelector(selectForm);
+  const dispatch = useAppDispatch();
   const initialOptions = options ? options : [];
   const [activeInput, setActiveInput] = useState<boolean>(false);
-  const [activeCard, setActiveCard] = useState<boolean>(false);
+  const [activeCard, setActiveCard] = useState<boolean>(true);
   const [questionLabel, setQuestionLabel] = useState<JSONContent>(label);
   const [questionOptions, setQuestionOptions] =
     useState<IOption[]>(initialOptions);
@@ -132,13 +138,25 @@ const QuestionSlide = ({
     handleSaveQuestion({ _id, data });
   };
 
+  const handleDeleteQuestion = (_id: string, questions: IQuestion[] | null) => {
+    if (questions) {
+      const items = deleteQuestionUtil(_id, questions);
+      dispatch(updateQuestions(items));
+
+      Api.deleteQuestion({ _id, formId: String(form?._id) }).catch((error) => {
+        console.error(error);
+        dispatch(updateQuestions(questions));
+      });
+    }
+  }; //Handle question delete
+
   return (
-    <QuestionCard>
+    <QuestionCard sx={{ width: "100%" }}>
       <Box
         sx={{ display: "flex", flexDirection: "column", gap: 3 }}
         tabIndex={0} // Makes Box focusable
-        onFocus={() => setActiveCard(true)}
-        onBlur={() => setActiveCard(false)}
+        // onFocus={() => setActiveCard(true)}
+        // onBlur={() => setActiveCard(false)}
       >
         <Grid container columnSpacing={2}>
           <Grid item xs={6}>
@@ -182,7 +200,11 @@ const QuestionSlide = ({
           options={questionOptions}
           setOptions={handleSetOptions}
         />
-        {activeCard ? <CardFooter /> : null}
+        {activeCard ? (
+          <CardFooter
+            handleDeleteQuestion={() => handleDeleteQuestion(_id, questions)}
+          />
+        ) : null}
       </Box>
     </QuestionCard>
   );

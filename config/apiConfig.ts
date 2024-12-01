@@ -8,9 +8,18 @@ export const apiConfig = {
     SAVE: {
       BASE: "/save",
     },
+    SUBMIT: {
+      BASE: "/submit",
+    },
   },
   QUESTION: {
     BASE: "/question",
+  },
+  SYNC_QUESTIONS: {
+    BASE: "/sync-questions",
+  },
+  POSITION: {
+    BASE: "/position",
   },
   ANSWER: {
     BASE: "/answer",

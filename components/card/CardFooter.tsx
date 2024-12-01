@@ -1,10 +1,14 @@
 import { Box, Divider, IconButton, Switch } from "@mui/material";
-import React from "react";
+import React, { MouseEventHandler } from "react";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
 
-const CardFooter = () => {
+interface ICardFooterProps {
+  handleDeleteQuestion: () => void;
+}
+
+const CardFooter = ({ handleDeleteQuestion }: ICardFooterProps) => {
   return (
     <Box>
       <Divider />
@@ -20,7 +24,7 @@ const CardFooter = () => {
         <IconButton>
           <ContentCopyOutlinedIcon />
         </IconButton>
-        <IconButton>
+        <IconButton onClick={handleDeleteQuestion}>
           <DeleteOutlinedIcon />
         </IconButton>
         <Box sx={{ borderLeft: "1px solid #bbbbbb", height: 30 }} />

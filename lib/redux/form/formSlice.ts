@@ -5,6 +5,7 @@ import {
   getActiveForm,
   getFormQuestions,
   saveFormQuestion,
+  updateFormQuestionsPosition,
 } from "./thunk";
 import { IForm, IQuestion } from "./types";
 
@@ -37,7 +38,9 @@ export const formSlice = createSlice({
   name: "form",
   initialState,
   reducers: {
-    setFormName: () => {},
+    updateQuestions: (state, action) => {
+      state.questions = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getActiveForm.pending, (state) => {
@@ -60,6 +63,17 @@ export const formSlice = createSlice({
     builder.addCase(autoSave.rejected, (state) => {
       state.asyncSaveForm = STATUS.REJECTED;
     });
+    // update form questions position
+    builder.addCase(updateFormQuestionsPosition.pending, (state) => {
+      state.asyncSaveQuestion = STATUS.PENDING;
+    });
+    builder.addCase(updateFormQuestionsPosition.fulfilled, (state, action) => {
+      console.log(action.payload);
+      state.asyncSaveQuestion = STATUS.FULFILLED;
+    });
+    builder.addCase(updateFormQuestionsPosition.rejected, (state) => {
+      state.asyncSaveQuestion = STATUS.REJECTED;
+    });
     //get active form questions
     builder.addCase(getFormQuestions.pending, (state) => {
       state.getQuestionsAsync = STATUS.PENDING;
@@ -76,7 +90,9 @@ export const formSlice = createSlice({
       state.asyncSaveQuestion = STATUS.PENDING;
     });
     builder.addCase(saveFormQuestion.fulfilled, (state, action) => {
-      console.log(action.payload);
+      if (action?.payload?.question)
+        state.questions?.push(action.payload.question);
+
       state.asyncSaveQuestion = STATUS.FULFILLED;
     });
     builder.addCase(saveFormQuestion.rejected, (state) => {
@@ -85,7 +101,7 @@ export const formSlice = createSlice({
   },
 });
 
-export const { setFormName } = formSlice.actions;
+export const { updateQuestions } = formSlice.actions;
 
 export const selectForm = (state: RootState) => state.formSlice;
 

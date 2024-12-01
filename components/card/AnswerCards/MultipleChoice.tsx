@@ -99,13 +99,14 @@ const MultipleChoice = ({
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      {radioButtonOptions.map((option) => (
+      {radioButtonOptions.map((option, index) => (
         <Option
           key={option._id}
           _id={option._id}
           type={type}
           name={option.value}
           value={option.value}
+          index={index + 1}
           handleOptionValueChange={handleOptionValueChange}
           handleDeleteOption={handleDeleteOption}
           isShowDelete={radioButtonOptions.length > 1}
@@ -130,9 +131,9 @@ const MultipleChoice = ({
       >
         {type === answerTypes.MULTIPLE_CHOICE ? (
           <RadioButtonCircle />
-        ) : (
+        ) : type === answerTypes.CHECKBOXES ? (
           <Checkbox />
-        )}
+        ) : null}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Typography
             sx={{
@@ -144,7 +145,7 @@ const MultipleChoice = ({
           >
             Add option
           </Typography>
-          {!isOtherOptionFound() ? (
+          {!isOtherOptionFound() && type !== answerTypes.DROPDOWN ? (
             <>
               <Typography>or</Typography>
               <Button
@@ -163,6 +164,7 @@ interface IOptionProps {
   _id?: string;
   name?: string;
   value: string;
+  index?: number;
   type: string;
   handleDeleteOption: (name: string) => void;
   isOtherOption?: boolean;
@@ -176,6 +178,7 @@ interface IOptionProps {
 const Option = ({
   _id,
   name,
+  index,
   value,
   type,
   handleDeleteOption,
@@ -200,8 +203,10 @@ const Option = ({
     >
       {type === answerTypes.MULTIPLE_CHOICE ? (
         <RadioButtonCircle />
-      ) : (
+      ) : type === answerTypes.CHECKBOXES ? (
         <Checkbox />
+      ) : (
+        <Typography>{index}.</Typography>
       )}
       {isOtherOption ? (
         <Box

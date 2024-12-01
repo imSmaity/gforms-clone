@@ -1,5 +1,7 @@
 "use client";
 import AddQuestion from "@/components/card/AddQuestion";
+import Demo from "@/components/Demo";
+import DraggableCards from "@/components/drag-and-drop/DraggableCards";
 import HeaderSlide from "@/components/slides/HeaderSlide";
 import QuestionSlide from "@/components/slides/QuestionSlide";
 import { selectForm, STATUS } from "@/lib/redux/form/formSlice";
@@ -8,17 +10,19 @@ import {
   getActiveForm,
   getFormQuestions,
   saveFormQuestion,
+  updateFormQuestionsPosition,
 } from "@/lib/redux/form/thunk";
+import { IQuestion, ISaveQuestionAsync } from "@/lib/redux/form/types";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { selectUser } from "@/lib/redux/user/userSlice";
-import { socket } from "@/utils/socket";
-import { Box, LinearProgress } from "@mui/material";
-import { redirect, useParams } from "next/navigation";
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { v1 as uuid } from "uuid";
+import { DndContext } from "@dnd-kit/core";
+import { SortableContext } from "@dnd-kit/sortable";
+import { Box, Card, LinearProgress } from "@mui/material";
 import { JSONContent } from "@tiptap/react";
 import _ from "lodash";
-import { IQuestion, ISaveQuestionAsync } from "@/lib/redux/form/types";
+import { redirect, useParams } from "next/navigation";
+import { useCallback, useLayoutEffect, useState } from "react";
+import { v1 as uuid } from "uuid";
 
 export default function Form() {
   const user = useAppSelector(selectUser);
@@ -46,7 +50,7 @@ export default function Form() {
       dispatch(getFormQuestions({ formId }));
     }
 
-    if (questions && !activeQuestions) {
+    if (questions) {
       setActiveQuestions(questions);
     }
   }, [questions]);
@@ -58,11 +62,11 @@ export default function Form() {
 
   const addQuestions = () => {
     const initialData = { label: {}, options: [], type: "multiple_choice" };
-    if (Array.isArray(activeQuestions))
-      setActiveQuestions([
-        ...activeQuestions,
-        { tempId: uuid(), ...initialData },
-      ]);
+    // if (Array.isArray(activeQuestions))
+    //   setActiveQuestions([
+    //     ...activeQuestions,
+    //     { tempId: uuid(), ...initialData },
+    //   ]);
     dispatch(saveFormQuestion({ userId, formId, data: initialData }));
   };
 
@@ -104,6 +108,11 @@ export default function Form() {
     []
   );
 
+  const handleUpdatePosition = useCallback(
+    _.debounce((data) => dispatch(updateFormQuestionsPosition(data)), 1000),
+    []
+  );
+
   if (isLoading)
     return (
       <Box sx={{ pt: 15 }}>
@@ -128,17 +137,12 @@ export default function Form() {
             description={form?.description}
             handleSetValue={handleSetValue}
           />
-          {activeQuestions?.map((question) => (
-            <QuestionSlide
-              _id={question._id}
-              label={question.label}
-              key={question._id || question?.tempId}
-              type={question.type}
-              value={question.label}
-              options={question.options}
-              handleSaveQuestion={handleChangeQuestionData}
-            />
-          ))}
+          <DraggableCards
+            questions={activeQuestions}
+            handleUpdatePosition={handleUpdatePosition}
+            formId={formId}
+            handleChangeQuestionData={handleChangeQuestionData}
+          />
           <Box sx={{ position: "fixed", left: "78%", bottom: 10 }}>
             <AddQuestion handleAddQuestions={addQuestions} />
           </Box>

@@ -3,8 +3,8 @@ export interface IForm {
   _id: string;
   userId: string;
   title: string;
-  header: string;
-  description: string;
+  header: JSONContent;
+  description: JSONContent;
   questions: string;
 }
 
@@ -16,9 +16,11 @@ export interface IOption {
 }
 export interface IQuestion {
   _id?: string;
+  id?: number | string;
   formId?: string;
   userId?: string;
   tempId?: string;
+  slNo?: number;
   type: string;
   label: JSONContent;
   options: IOption[];
@@ -39,4 +41,14 @@ export interface ISaveQuestionAsync {
   userId: string;
   formId: string;
   data: IQuestion;
+}
+
+export interface IDeleteQuestionAsync {
+  _id: string;
+  formId: string;
+}
+
+export interface IUpdateQuestionsPositionAsync {
+  formId: string;
+  newPositions: string[];
 }

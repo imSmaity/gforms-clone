@@ -26,6 +26,7 @@ export default function QuestionCard({
       sx={{
         width: "55%",
         // borderLeft: isActive ? "5px solid #4285f4" : "0",
+        p: 1,
         borderRadius: 2,
         ...sx,
       }}

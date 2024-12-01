@@ -11,8 +11,8 @@ interface ActiveInput {
 }
 
 interface IHeaderSlideProps {
-  header?: string;
-  description?: string;
+  header?: JSONContent;
+  description?: JSONContent;
   handleSetValue: (name: string, value: JSONContent) => void;
 }
 

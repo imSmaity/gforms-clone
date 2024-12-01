@@ -13,3 +13,8 @@ export interface IGetAnswersAsync {
   formId: string;
   userId: string;
 }
+
+export interface ISubmitFormAsync {
+  formId: string;
+  responserId: string;
+}

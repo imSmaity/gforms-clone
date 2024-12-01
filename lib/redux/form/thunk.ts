@@ -1,11 +1,13 @@
 import Api from "@/Api";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
+  IDeleteQuestionAsync,
   IForm,
   IGetQuestionsAsync,
   IQuestion,
   ISaveFormAsync,
   ISaveQuestionAsync,
+  IUpdateQuestionsPositionAsync,
 } from "./types";
 
 export const getActiveForm = createAsyncThunk(
@@ -32,6 +34,13 @@ export const getFormQuestions = createAsyncThunk(
 export const saveFormQuestion = createAsyncThunk(
   "form/question/autoSave",
   async (data: ISaveQuestionAsync) => {
-    return (await Api.saveQuestion(data)) as { data: IQuestion[] | IForm };
+    return (await Api.saveQuestion(data)) as { question: IQuestion };
+  }
+);
+
+export const updateFormQuestionsPosition = createAsyncThunk(
+  "form/questions/position",
+  async (data: IUpdateQuestionsPositionAsync) => {
+    return (await Api.updateQuestionsPosition(data)) as any;
   }
 );

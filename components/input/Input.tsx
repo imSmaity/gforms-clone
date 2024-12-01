@@ -6,7 +6,7 @@ import { Content, EditorContent, JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { SyntheticEvent } from "react";
 import RichTextButtons from "../richText/RichTextButtons";
-import "./style.css";
+import "../styles/editor-style.css";
 
 export enum InputVariant {
   STANDARD = "standard",

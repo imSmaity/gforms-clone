@@ -1,13 +1,18 @@
 import { apiConfig } from "@/config/apiConfig";
 import {
+  IDeleteQuestionAsync,
   IGetQuestionsAsync,
   ISaveFormAsync,
   ISaveQuestionAsync,
+  IUpdateQuestionsPositionAsync,
 } from "@/lib/redux/form/types";
-import { IGetAnswersAsync } from "@/lib/redux/responder/types";
+import {
+  IGetAnswersAsync,
+  ISubmitFormAsync,
+} from "@/lib/redux/responder/types";
 import Axios from "axios";
 
-const { FORMS, FORM, QUESTION, ANSWER } = apiConfig;
+const { FORMS, FORM, QUESTION, ANSWER, POSITION, SYNC_QUESTIONS } = apiConfig;
 
 const axiosInstance = Axios.create({
   baseURL: apiConfig.baseURL,
@@ -75,16 +80,52 @@ export default {
         .catch((error) => reject(error));
     });
   },
-  getAnswers({ formId, userId }: IGetAnswersAsync) {
+  deleteQuestion({ _id, formId }: IDeleteQuestionAsync) {
     return new Promise((resolve, reject) => {
       axiosInstance
-        .get(
+        .delete(
           FORM.BASE.concat(
-            FORM.SAVE.BASE.concat(
-              ANSWER.BASE.concat(`?formId=${formId}&userId=${userId}`)
+            FORM.SAVE.BASE.concat(QUESTION.BASE).concat(
+              `?_id=${_id}&formId=${formId}`
             )
           )
         )
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => reject(error));
+    });
+  },
+  updateQuestionsPosition(data: IUpdateQuestionsPositionAsync) {
+    return new Promise((resolve, reject) => {
+      axiosInstance
+        .put(FORM.BASE.concat(QUESTION.BASE.concat(POSITION.BASE)), data)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => reject(error));
+    });
+  },
+  getAnswers({ formId, userId }: IGetAnswersAsync) {
+    return new Promise((resolve, reject) => {
+      axiosInstance
+        .post(FORM.BASE.concat(SYNC_QUESTIONS.BASE), {
+          formId,
+          userId,
+        })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => reject(error));
+    });
+  },
+  submitForm({ formId, responserId }: ISubmitFormAsync) {
+    return new Promise((resolve, reject) => {
+      axiosInstance
+        .post(FORM.BASE.concat(FORM.SUBMIT.BASE), {
+          formId,
+          responserId,
+        })
         .then((res) => {
           resolve(res.data);
         })
