@@ -1,4 +1,5 @@
 "use client";
+import Api from "@/Api";
 import MultipleChoice from "@/components/card/AnswerCards/MultipleChoice";
 import QuestionCard from "@/components/card/QuestionCard";
 import Dropdown from "@/components/dropdown/Dropdown";
@@ -17,68 +18,15 @@ import Underline from "@tiptap/extension-underline";
 import { EditorContent, JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { redirect, useParams } from "next/navigation";
-import { CSSProperties, useLayoutEffect } from "react";
-
-interface IContent {
-  value: JSONContent;
-  style?: CSSProperties;
-  className?: string;
-}
-
-const Content = ({ value, style, className }: IContent) => {
-  const editor = useEditor({
-    content: value ? value : "",
-    editable: false,
-    extensions: [StarterKit, Underline],
-    immediatelyRender: true,
-  });
-
-  return <EditorContent editor={editor} className={className} style={style} />;
-};
-
-const Answer = ({ response, question }: IAnswer) => {
-  switch (question?.type) {
-    case answerTypes.MULTIPLE_CHOICE:
-      return question?.options?.map((option) => (
-        <RadioInput
-          key={option._id}
-          label={option.value}
-          checked={option._id == response}
-        />
-      ));
-    case answerTypes.CHECKBOXES:
-      return question?.options?.map((option) => (
-        <CheckInput
-          key={option._id}
-          label={option.value}
-          checked={option._id == response}
-        />
-      ));
-    case answerTypes.DROPDOWN:
-      return <Dropdown options={question?.options} />;
-    case answerTypes.PARAGRAPH:
-      return (
-        <Input
-          placeholder="Your answer"
-          sx={{ width: "100%", fontSize: 14 }}
-          value={response}
-        />
-      );
-    default:
-      return (
-        <Input
-          placeholder="Your answer"
-          sx={{ width: "50%", fontSize: 14 }}
-          value={response}
-        />
-      );
-  }
-};
+import { CSSProperties, useLayoutEffect, useState } from "react";
+import Content from "../components/Content";
+import Answer from "../components/Answer";
 
 export default function ViewForm() {
   const user = useAppSelector(selectUser);
   const { form, getAsyncStatus } = useAppSelector(selectForm);
   const { answers } = useAppSelector(selectResponder);
+  const [submitting, setSubmitting] = useState(false);
   const dispatch = useAppDispatch();
 
   const params = useParams();
@@ -94,11 +42,18 @@ export default function ViewForm() {
     }
   }, []);
 
-  console.log(answers);
   if (!isLoading && !form) {
     //if form id not found
     redirect("/");
   }
+
+  const handleFormSubmit = () => {
+    setSubmitting(true);
+    Api.submitForm({ formId, responserId: userId })
+      .then((res) => console.log)
+      .catch(console.error)
+      .finally(() => setSubmitting(false));
+  };
 
   if (isLoading)
     return (
@@ -133,7 +88,14 @@ export default function ViewForm() {
           </QuestionCard>
         );
       })}
-      <Button variant="contained">Submit</Button>
+      <Button
+        variant="contained"
+        disabled={submitting}
+        sx={{ textTransform: "none" }}
+        onClick={handleFormSubmit}
+      >
+        Submit
+      </Button>
     </Box>
   );
 }

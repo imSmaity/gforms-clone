@@ -11,6 +11,9 @@ export const apiConfig = {
     SUBMIT: {
       BASE: "/submit",
     },
+    RESPONSES: {
+      BASE: "/responses",
+    },
   },
   QUESTION: {
     BASE: "/question",

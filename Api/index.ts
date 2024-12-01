@@ -2,6 +2,7 @@ import { apiConfig } from "@/config/apiConfig";
 import {
   IDeleteQuestionAsync,
   IGetQuestionsAsync,
+  IGetResponsesAsync,
   ISaveFormAsync,
   ISaveQuestionAsync,
   IUpdateQuestionsPositionAsync,
@@ -126,6 +127,22 @@ export default {
           formId,
           responserId,
         })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => reject(error));
+    });
+  },
+  getIndividualResponses({ formId, responserId, userId }: IGetResponsesAsync) {
+    return new Promise((resolve, reject) => {
+      axiosInstance
+        .get(
+          FORM.BASE.concat(
+            FORM.RESPONSES.BASE.concat(
+              `?formId=${formId}&responserId=${responserId}&userId=${userId}`
+            )
+          )
+        )
         .then((res) => {
           resolve(res.data);
         })

@@ -6,6 +6,7 @@ export interface IForm {
   header: JSONContent;
   description: JSONContent;
   questions: string;
+  responsesUsers: string[];
 }
 
 export interface IOption {
@@ -51,4 +52,10 @@ export interface IDeleteQuestionAsync {
 export interface IUpdateQuestionsPositionAsync {
   formId: string;
   newPositions: string[];
+}
+
+export interface IGetResponsesAsync {
+  formId?: string;
+  responserId?: string;
+  userId?: string;
 }

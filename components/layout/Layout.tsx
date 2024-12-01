@@ -6,6 +6,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import Navbar from "../navbar/Navbar";
+import AppTabs from "../navbar/Tabs";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +21,8 @@ const Layout = ({ children }: ILayoutProps) => {
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <Navbar />
-            {children}
+            {/* {children} */}
+            <AppTabs />
           </ThemeProvider>
         </AppRouterCacheProvider>
       </QueryClientProvider>
