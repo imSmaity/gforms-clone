@@ -7,15 +7,13 @@ import * as React from "react";
 interface IQuestionCardProps {
   children: React.ReactNode;
   sx?: SxProps<Theme>;
-  onBlur?: (e: React.SyntheticEvent) => void;
-  onFocus?: (e: React.SyntheticEvent) => void;
+  handleActive?: () => void;
 }
 
 export default function QuestionCard({
   children,
   sx,
-  onBlur,
-  onFocus,
+  handleActive,
 }: IQuestionCardProps) {
   // const { ref, isActive } = useOutsideClick();
 
@@ -30,8 +28,7 @@ export default function QuestionCard({
         borderRadius: 2,
         ...sx,
       }}
-      onBlur={onBlur}
-      onFocus={onFocus}
+      onClick={handleActive}
     >
       <CardContent>{children}</CardContent>
     </Card>

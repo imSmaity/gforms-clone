@@ -26,6 +26,7 @@
     "@tiptap/react": "^2.7.2",
     "@tiptap/starter-kit": "^2.7.2",
     "axios": "^1.7.7",
+    "immer": "^10.1.1",
     "lodash": "^4.17.21",
     "next": "14.2.11",
     "react": "^18",

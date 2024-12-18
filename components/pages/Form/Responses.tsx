@@ -1,3 +1,4 @@
+"use client";
 import Api from "@/Api";
 import QuestionCard from "@/components/card/QuestionCard";
 import { selectForm } from "@/lib/redux/form/formSlice";
@@ -7,6 +8,7 @@ import { Box, CircularProgress, Pagination, Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Content from "../components/Content";
 import Answer from "../components/Answer";
+import { toObject } from "@/utils/modifyObjects";
 
 const Responses = () => {
   const [activeResponse, setActiveResponse] = useState(1);
@@ -65,7 +67,7 @@ const Responses = () => {
           return (
             <QuestionCard key={answer._id}>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <Content value={answer.question?.label} />
+                <Content value={toObject(answer.question?.label)} />
                 <Answer {...answer} disabled={true} />
               </Box>
             </QuestionCard>

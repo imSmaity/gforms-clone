@@ -1,15 +1,35 @@
 import { IOption } from "@/lib/redux/form/types";
-import { Box, Typography, Checkbox, Select, MenuItem } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Checkbox,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+} from "@mui/material";
 
 interface ICheckInputProps {
   options?: IOption[];
   disabled?: boolean;
+  handleChange: (e: SelectChangeEvent) => void;
+  value: string;
 }
 
-const Dropdown = ({ options = [], disabled }: ICheckInputProps) => {
+const Dropdown = ({
+  options = [],
+  disabled,
+  handleChange,
+  value,
+}: ICheckInputProps) => {
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
-      <Select placeholder="Choose" sx={{ minWidth: "30%" }} disabled={disabled}>
+      <Select
+        placeholder="Choose"
+        sx={{ width: "30%" }}
+        disabled={disabled}
+        value={value || ""}
+        onChange={handleChange}
+      >
         <MenuItem value="">Select</MenuItem>
         {options.map((option) => (
           <MenuItem key={option._id} value={option._id}>

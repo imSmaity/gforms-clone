@@ -1,9 +1,10 @@
 import { IQuestion } from "@/lib/redux/form/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { forwardRef, HTMLAttributes } from "react";
+import { forwardRef, HTMLAttributes, useState } from "react";
 import QuestionSlide from "../slides/QuestionSlide";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import { toObject } from "@/utils/modifyObjects";
 
 export interface ISave {
   _id: string;
@@ -16,10 +17,14 @@ type Props = {
   isDragging?: boolean;
   listeners?: any;
   attributes?: any;
+  activeCard: string;
+  setActiveCard: (v: string) => void;
 } & HTMLAttributes<HTMLDivElement>;
 
 type Props2 = {
   item: IQuestion;
+  activeCard: string;
+  setActiveCard: (v: string) => void;
   handleChangeQuestionData: ({ _id, data }: ISave) => void;
 } & HTMLAttributes<HTMLDivElement>;
 
@@ -32,6 +37,8 @@ export const Item = forwardRef<HTMLDivElement, Props>(
       listeners,
       attributes,
       style,
+      activeCard,
+      setActiveCard,
       ...props
     },
     ref
@@ -73,11 +80,13 @@ export const Item = forwardRef<HTMLDivElement, Props>(
         {/* Non-Draggable Content */}
         <QuestionSlide
           _id={String(item._id)}
-          label={item.label}
+          label={toObject(item.label)}
           key={item._id || item?.tempId}
           type={item.type}
-          value={item.label}
+          value={toObject(item.label)}
           options={item.options}
+          activeCard={activeCard}
+          setActiveCard={setActiveCard}
           handleSaveQuestion={handleChangeQuestionData} //handleChangeQuestionData
         />
       </div>

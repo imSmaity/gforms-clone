@@ -3,6 +3,7 @@ import {
   IDeleteQuestionAsync,
   IGetQuestionsAsync,
   IGetResponsesAsync,
+  ISaveAnswerAsync,
   ISaveFormAsync,
   ISaveQuestionAsync,
   IUpdateQuestionsPositionAsync,
@@ -143,6 +144,17 @@ export default {
             )
           )
         )
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => reject(error));
+    });
+  },
+  saveAnswer(data: ISaveAnswerAsync) {
+    //data= _id, userId, formId, response
+    return new Promise((resolve, reject) => {
+      axiosInstance
+        .post(FORM.BASE.concat(FORM.SAVE.BASE.concat(ANSWER.BASE)), data)
         .then((res) => {
           resolve(res.data);
         })

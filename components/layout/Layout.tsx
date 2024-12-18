@@ -21,8 +21,7 @@ const Layout = ({ children }: ILayoutProps) => {
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <Navbar />
-            {/* {children} */}
-            <AppTabs />
+            {children}
           </ThemeProvider>
         </AppRouterCacheProvider>
       </QueryClientProvider>

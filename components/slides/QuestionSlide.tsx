@@ -1,29 +1,27 @@
 "use client";
-import React, { useState } from "react";
-import Input2, { InputVariant } from "../input/Input";
-import QuestionCard from "../card/QuestionCard";
-import { Box, Grid, IconButton, SelectChangeEvent } from "@mui/material";
-import QuestionTypeSelector from "../select/QuestionTypeSelector";
-import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
+import Api from "@/Api";
 import { answerTypes, answerTypes as AnswerTypes } from "@/config/constant";
-import ShortAnswer from "../card/AnswerCards/ShortAnswer";
-import Paragraph from "../card/AnswerCards/Paragraph";
-import MultipleChoice from "../card/AnswerCards/MultipleChoice";
-import Checkboxes from "../card/AnswerCards/Checkboxes";
-import Dropdown from "../card/AnswerCards/Dropdown";
-import FileUpload from "../card/AnswerCards/FileUpload";
-import LinearScale from "../card/AnswerCards/LinearScale";
-import MultipleChoiceGrid from "../card/AnswerCards/MultipleChoiceGrid";
+import { selectForm, updateQuestions } from "@/lib/redux/form/formSlice";
+import { IOption, IQuestion } from "@/lib/redux/form/types";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { deleteQuestionUtil } from "@/utils/deleteQuestion";
+import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
+import { Box, Grid, IconButton, SelectChangeEvent } from "@mui/material";
+import { JSONContent } from "@tiptap/react";
+import { useState } from "react";
 import CheckboxGrid from "../card/AnswerCards/CheckboxGrid";
 import Date from "../card/AnswerCards/Date";
+import FileUpload from "../card/AnswerCards/FileUpload";
+import LinearScale from "../card/AnswerCards/LinearScale";
+import MultipleChoice from "../card/AnswerCards/MultipleChoice";
+import MultipleChoiceGrid from "../card/AnswerCards/MultipleChoiceGrid";
+import Paragraph from "../card/AnswerCards/Paragraph";
+import ShortAnswer from "../card/AnswerCards/ShortAnswer";
 import Time from "../card/AnswerCards/Time";
 import CardFooter from "../card/CardFooter";
-import { IOption, IQuestion } from "@/lib/redux/form/types";
-import { JSONContent } from "@tiptap/react";
-import { deleteQuestionUtil } from "@/utils/deleteQuestion";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { selectForm, updateQuestions } from "@/lib/redux/form/formSlice";
-import Api from "@/Api";
+import QuestionCard from "../card/QuestionCard";
+import Input2, { InputVariant } from "../input/Input";
+import QuestionTypeSelector from "../select/QuestionTypeSelector";
 
 interface IAnswerComponentProps {
   questionType: string;
@@ -37,6 +35,8 @@ interface IQuestionSlideProps {
   value: JSONContent;
   type: string;
   options?: IOption[];
+  activeCard: string;
+  setActiveCard: (v: string) => void;
   handleSaveQuestion: ({ _id, data }: { _id: string; data: IQuestion }) => void;
 }
 
@@ -93,13 +93,14 @@ const QuestionSlide = ({
   label,
   value,
   options,
+  activeCard,
+  setActiveCard,
   handleSaveQuestion,
 }: IQuestionSlideProps) => {
   const { form, questions } = useAppSelector(selectForm);
   const dispatch = useAppDispatch();
   const initialOptions = options ? options : [];
   const [activeInput, setActiveInput] = useState<boolean>(false);
-  const [activeCard, setActiveCard] = useState<boolean>(true);
   const [questionLabel, setQuestionLabel] = useState<JSONContent>(label);
   const [questionOptions, setQuestionOptions] =
     useState<IOption[]>(initialOptions);
@@ -150,13 +151,15 @@ const QuestionSlide = ({
     }
   }; //Handle question delete
 
+  const isActive = activeCard === _id;
   return (
-    <QuestionCard sx={{ width: "100%" }}>
+    <QuestionCard
+      sx={{ width: "100%" }}
+      handleActive={() => setActiveCard(_id)}
+    >
       <Box
         sx={{ display: "flex", flexDirection: "column", gap: 3 }}
         tabIndex={0} // Makes Box focusable
-        // onFocus={() => setActiveCard(true)}
-        // onBlur={() => setActiveCard(false)}
       >
         <Grid container columnSpacing={2}>
           <Grid item xs={6}>
@@ -169,14 +172,12 @@ const QuestionSlide = ({
               setValue={handleSetLabel}
               fontSize={14}
               active={activeInput}
-              onFocus={() => setActiveInput(true)}
-              onBlur={() => setActiveInput(false)}
             />
           </Grid>
           <Grid item xs={2}>
             <Box
               sx={{
-                display: activeCard ? "flex" : "none",
+                display: isActive ? "flex" : "none",
                 justifyContent: "center",
                 marginTop: 2,
               }}
@@ -187,7 +188,7 @@ const QuestionSlide = ({
             </Box>
           </Grid>
           <Grid item xs={4}>
-            <Box sx={{ display: activeCard ? "flex" : "none" }}>
+            <Box sx={{ display: isActive ? "flex" : "none" }}>
               <QuestionTypeSelector
                 value={questionType}
                 handleChange={handleSetType}
@@ -200,7 +201,7 @@ const QuestionSlide = ({
           options={questionOptions}
           setOptions={handleSetOptions}
         />
-        {activeCard ? (
+        {isActive ? (
           <CardFooter
             handleDeleteQuestion={() => handleDeleteQuestion(_id, questions)}
           />

@@ -32,6 +32,7 @@ const HeaderSlide = ({
     <QuestionCard
       sx={{
         borderTop: "10px solid #4285f4",
+        width: "53.8%",
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>

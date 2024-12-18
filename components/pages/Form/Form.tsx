@@ -55,10 +55,10 @@ export default function Form() {
     }
   }, [questions]);
 
-  if (!isLoading && !form) {
-    //if form id not found
-    redirect("/");
-  }
+  // if (!isLoading && !form) {
+  //   //if form id not found
+  //   redirect("/");
+  // }
 
   const addQuestions = () => {
     const initialData = { label: {}, options: [], type: "multiple_choice" };

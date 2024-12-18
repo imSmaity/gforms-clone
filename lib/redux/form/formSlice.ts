@@ -1,3 +1,4 @@
+import { convertToObjectForm } from "@/utils/modifyObjects";
 import { createSlice } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
 import {
@@ -47,7 +48,7 @@ export const formSlice = createSlice({
       state.getAsyncStatus = STATUS.PENDING;
     });
     builder.addCase(getActiveForm.fulfilled, (state, action) => {
-      if (action.payload) state.form = action.payload.data;
+      if (action.payload) state.form = convertToObjectForm(action.payload.data);
       state.getAsyncStatus = STATUS.FULFILLED;
     });
     builder.addCase(getActiveForm.rejected, (state) => {

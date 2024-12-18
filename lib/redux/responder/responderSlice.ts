@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { IAnswer } from "./types";
-import { getFormAnswers } from "./thunk";
+import { getFormAnswers, saveAnswer } from "./thunk";
 
 interface ResponderState {
   answers: IAnswer[] | null;
   getAnswersAsync: string;
+  saveAnswerAsync: string;
 }
 
 export const STATUS = {
@@ -18,6 +19,7 @@ export const STATUS = {
 const initialState: ResponderState = {
   answers: null,
   getAnswersAsync: STATUS.IDLE,
+  saveAnswerAsync: STATUS.IDLE,
 };
 
 export const responderSlice = createSlice({
@@ -34,6 +36,16 @@ export const responderSlice = createSlice({
     });
     builder.addCase(getFormAnswers.rejected, (state) => {
       state.getAnswersAsync = STATUS.REJECTED;
+    });
+    // auto save answer
+    builder.addCase(saveAnswer.pending, (state) => {
+      state.saveAnswerAsync = STATUS.PENDING;
+    });
+    builder.addCase(saveAnswer.fulfilled, (state) => {
+      state.saveAnswerAsync = STATUS.FULFILLED;
+    });
+    builder.addCase(saveAnswer.rejected, (state) => {
+      state.saveAnswerAsync = STATUS.REJECTED;
     });
   },
 });

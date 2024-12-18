@@ -10,7 +10,7 @@ import { selectForm, STATUS } from "@/lib/redux/form/formSlice";
 import { getActiveForm } from "@/lib/redux/form/thunk";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { selectResponder } from "@/lib/redux/responder/responderSlice";
-import { getFormAnswers } from "@/lib/redux/responder/thunk";
+import { getFormAnswers, saveAnswer } from "@/lib/redux/responder/thunk";
 import { IAnswer } from "@/lib/redux/responder/types";
 import { selectUser } from "@/lib/redux/user/userSlice";
 import { Box, Button, Input, LinearProgress } from "@mui/material";
@@ -18,9 +18,13 @@ import Underline from "@tiptap/extension-underline";
 import { EditorContent, JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { redirect, useParams } from "next/navigation";
-import { CSSProperties, useLayoutEffect, useState } from "react";
+import { CSSProperties, useCallback, useLayoutEffect, useState } from "react";
 import Content from "../components/Content";
 import Answer from "../components/Answer";
+import { toObject } from "@/utils/modifyObjects";
+import _ from "lodash";
+import { useDispatch } from "react-redux";
+import { ISaveAnswerAsync } from "@/lib/redux/form/types";
 
 export default function ViewForm() {
   const user = useAppSelector(selectUser);
@@ -47,6 +51,20 @@ export default function ViewForm() {
     redirect("/");
   }
 
+  const handleSaveAnswer = useCallback(
+    _.debounce((_id: string, response: string[]) => {
+      console.log(_id, response);
+      const body: ISaveAnswerAsync = {
+        _id,
+        userId,
+        formId,
+        data: response,
+      };
+      dispatch(saveAnswer(body));
+    }, 700),
+    []
+  );
+
   const handleFormSubmit = () => {
     setSubmitting(true);
     Api.submitForm({ formId, responserId: userId })
@@ -68,7 +86,7 @@ export default function ViewForm() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        pt: 15,
+        pt: 10,
         gap: 2,
       }}
     >
@@ -82,8 +100,12 @@ export default function ViewForm() {
         return (
           <QuestionCard key={answer._id}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <Content value={answer.question?.label} />
-              <Answer {...answer} />
+              <Content value={toObject(answer.question?.label)} />
+              <Answer
+                answerId={answer._id}
+                handleSaveAnswer={handleSaveAnswer}
+                {...answer}
+              />
             </Box>
           </QuestionCard>
         );

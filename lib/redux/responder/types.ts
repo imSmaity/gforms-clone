@@ -6,7 +6,7 @@ export interface IAnswer {
   userId: string;
   adminId: string;
   question: IQuestion;
-  response: String;
+  response: string[];
 }
 
 export interface IGetAnswersAsync {

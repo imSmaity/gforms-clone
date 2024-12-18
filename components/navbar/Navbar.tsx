@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -17,6 +18,7 @@ import { usePathname } from "next/navigation";
 import { selectForm, STATUS } from "@/lib/redux/form/formSlice";
 import CloudSyncOutlinedIcon from "@mui/icons-material/CloudSyncOutlined";
 import CloudDoneOutlinedIcon from "@mui/icons-material/CloudDoneOutlined";
+import { selectResponder } from "@/lib/redux/responder/responderSlice";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
@@ -29,6 +31,7 @@ function Navbar() {
     null
   );
   const { form, asyncSaveForm, asyncSaveQuestion } = useAppSelector(selectForm);
+  const { saveAnswerAsync } = useAppSelector(selectResponder);
   const pathname = usePathname();
   const isShowAppBar = pathname !== "/forms";
 
@@ -48,7 +51,9 @@ function Navbar() {
   };
 
   const isFormSaving =
-    asyncSaveForm === STATUS.PENDING || asyncSaveQuestion == STATUS.PENDING;
+    asyncSaveForm === STATUS.PENDING ||
+    asyncSaveQuestion == STATUS.PENDING ||
+    saveAnswerAsync === STATUS.PENDING;
 
   return (
     <AppBar

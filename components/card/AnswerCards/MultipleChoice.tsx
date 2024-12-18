@@ -3,6 +3,7 @@ import React, { ChangeEvent, useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 import { IOption } from "@/lib/redux/form/types";
 import { answerTypes } from "@/config/constant";
+import { v4 as uuid } from "uuid";
 
 const initialOptions = [
   {
@@ -57,9 +58,10 @@ const MultipleChoice = ({
 
   const handleAddOption = (other?: string) => {
     const newOption: IOption = {
-      name: `option${
-        isOtherOptionFound() ? options.length : options.length + 1
-      }`,
+      // name: `option${
+      //   isOtherOptionFound() ? options.length : options.length + 1
+      // }`,
+      _id: uuid(),
       value: other
         ? ""
         : `Option ${
@@ -85,6 +87,7 @@ const MultipleChoice = ({
     _id: string
   ) => {
     const value = e.target.value;
+
     const currentOptions = new Array(...options);
     const newOptions = currentOptions?.map((option) => {
       if (option._id == _id) {

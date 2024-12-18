@@ -8,6 +8,8 @@ import FormCard from "@/components/card/FormCard";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { IForm } from "@/lib/redux/form/types";
+import Verify from "../auth/AlertSignIn";
+import AlertSignIn from "../auth/AlertSignIn";
 
 const Forms = () => {
   const user = useAppSelector(selectUser);
@@ -24,14 +26,16 @@ const Forms = () => {
   //use react query
 
   useEffect(() => {
-    Api.getForms({ userId: user._id })
-      .then((res: any) => {
-        setData(res.data);
-      })
-      .catch(console.log);
+    // Api.getForms({ userId: user._id })
+    //   .then((res: any) => {
+    //     setData(res.data);
+    //   })
+    //   .catch(console.log);
   }, []);
 
   if (isLoading) return <div>Loading...</div>;
+
+  return <AlertSignIn />;
 
   return (
     <Box

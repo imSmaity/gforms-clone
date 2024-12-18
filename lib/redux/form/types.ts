@@ -44,6 +44,13 @@ export interface ISaveQuestionAsync {
   data: IQuestion;
 }
 
+export interface ISaveAnswerAsync {
+  _id?: string;
+  userId: string;
+  formId: string;
+  data: string[];
+}
+
 export interface IDeleteQuestionAsync {
   _id: string;
   formId: string;

@@ -35,7 +35,11 @@ export default function DraggableCards({
   handleUpdatePosition,
   handleChangeQuestionData,
 }: IDraggableCardsProps) {
+  const initialActiveCard = Array.isArray(questions)
+    ? String(questions[0]._id)
+    : "-1";
   const [items, setItems] = useState<IQuestion[]>([]);
+  const [activeCard, setActiveCard] = useState<string>(initialActiveCard);
 
   // for drag overlay
   const [activeItem, setActiveItem] = useState<IQuestion>();
@@ -104,6 +108,8 @@ export default function DraggableCards({
             <SortableItem
               key={item._id}
               item={item}
+              activeCard={activeCard}
+              setActiveCard={setActiveCard}
               handleChangeQuestionData={handleChangeQuestionData}
             />
           ))}
@@ -113,6 +119,8 @@ export default function DraggableCards({
         {activeItem ? (
           <Item
             item={activeItem}
+            activeCard={activeCard}
+            setActiveCard={setActiveCard}
             handleChangeQuestionData={handleChangeQuestionData}
             isDragging
           />
