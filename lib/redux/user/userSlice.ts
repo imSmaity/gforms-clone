@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
-import { googleSignIn, userSession } from "./thunk";
+import { googleSignIn, userAsGuest, userSession } from "./thunk";
 import { IUser } from "./types";
 import { constant } from "@/config/constant";
 import _localStorage from "@/utils/_localStorage";
@@ -61,6 +61,22 @@ export const userSlice = createSlice({
       state.loginStatus = STATUS.FULFILLED;
     });
     builder.addCase(userSession.rejected, (state) => {
+      state.loginStatus = STATUS.REJECTED;
+    });
+
+    //as a guest
+    builder.addCase(userAsGuest.pending, (state) => {
+      state.loginStatus = STATUS.PENDING;
+    });
+    builder.addCase(userAsGuest.fulfilled, (state, action) => {
+      if (action.payload) {
+        const access_token = action.payload.access_token;
+        _localStorage.set(constant.localStorageKeys.authKey, access_token);
+        state.user = action.payload.user;
+      }
+      state.loginStatus = STATUS.FULFILLED;
+    });
+    builder.addCase(userAsGuest.rejected, (state) => {
       state.loginStatus = STATUS.REJECTED;
     });
   },

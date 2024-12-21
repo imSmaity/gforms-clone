@@ -17,7 +17,7 @@ import { encodeURL } from "@/utils/secureUrl";
 import { usePathname } from "next/navigation";
 import _localStorage from "@/utils/_localStorage";
 import { constant } from "@/config/constant";
-import { userSession } from "@/lib/redux/user/thunk";
+import { userAsGuest, userSession } from "@/lib/redux/user/thunk";
 
 interface IAlertSignInProps {}
 
@@ -39,6 +39,10 @@ const AlertSignIn = ({}: IAlertSignInProps) => {
     user.loginStatus === STATUS.IDLE || user.loginStatus === STATUS.REJECTED;
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${apiConfig.googleAuth.clientId}&state=${path}&response_type=code&scope=openid email profile&redirect_uri=${apiConfig.googleAuth.redirectURL}&prompt=consent&include_granted_scopes=true`;
 
+  const signInAsGuest = () => {
+    dispatch(userAsGuest({ email: apiConfig.testEmail }));
+  };
+
   useEffect(() => {
     const access_token = _localStorage.get(constant.localStorageKeys.authKey);
     if (access_token) {
@@ -58,7 +62,13 @@ const AlertSignIn = ({}: IAlertSignInProps) => {
       <DialogContent>
         <Typography gutterBottom sx={{ fontSize: 14 }}>
           To fill out this form, you must be signed in. Your identity will
-          remain anonymous.
+          remain anonymous. Sign in as a{" "}
+          <span
+            style={{ fontSize: "16px", color: "#127bc3", cursor: "pointer" }}
+            onClick={signInAsGuest}
+          >
+            Guest
+          </span>
         </Typography>
       </DialogContent>
       <DialogActions>

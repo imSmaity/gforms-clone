@@ -4,6 +4,7 @@ export const apiConfig = {
     clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
     redirectURL: process.env.NEXT_PUBLIC_REDIRECT_URI,
   },
+  testEmail: "su.suman.maity@gmail.com",
   GOOGLE: {
     BASE: "/google",
     AUTH: {
@@ -11,6 +12,9 @@ export const apiConfig = {
     },
     VERIFY: {
       BASE: "/verify",
+    },
+    GUEST: {
+      BASE: "/guest",
     },
   },
   USER: {
