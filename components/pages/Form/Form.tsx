@@ -59,9 +59,13 @@ export default function Form() {
     }
   }, [userId, formId]);
 
+  useLayoutEffect(() => {
+    setActiveQuestions(questions);
+  }, [questions]);
+
   const addQuestions = () => {
     const initialData = { label: {}, options: [], type: "multiple_choice" };
-    dispatch(saveFormQuestion({ userId, formId, data: initialData }));
+    dispatch(saveFormQuestion({ userId, formId, data: initialData })).unwrap();
   };
 
   const handleSave = useCallback(
