@@ -1,52 +1,57 @@
 "use client";
-import { constant } from "@/config/constant";
 import { Box } from "@mui/material";
-import { EditorState } from "draft-js";
-import "draft-js/dist/Draft.css";
+import { JSONContent } from "@tiptap/react";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import QuestionCard from "../card/QuestionCard";
-import Input from "../input/Input";
-import "./style.css";
 
 interface ActiveInput {
   title: boolean;
   description: boolean;
 }
 
-const HeaderSlide = () => {
-  const [title, setTitle] = useState(EditorState.createEmpty());
-  const [description, setDescription] = useState(EditorState.createEmpty());
+interface IHeaderSlideProps {
+  header?: JSONContent;
+  description?: JSONContent;
+  handleSetValue: (name: string, value: JSONContent) => void;
+}
+
+const Input = dynamic(() => import("../input/Input"));
+
+const HeaderSlide = ({
+  header,
+  description,
+  handleSetValue,
+}: IHeaderSlideProps) => {
   const [activeInput, setActiveInput] = useState<ActiveInput>({
     title: false,
     description: false,
   });
 
   return (
-    <QuestionCard sx={{ borderTop: "10px solid #4285f4" }}>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 3,
-        }}
-      >
+    <QuestionCard
+      sx={{
+        borderTop: "10px solid #4285f4",
+        width: { sm: "100%", md: "53.8%" },
+      }}
+    >
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
         <Input
+          placeholder="Form title"
           active={activeInput.title}
-          placeholder={constant.header.placeholder.title}
-          editorState={title}
-          setEditorState={setTitle}
-          sx={{ fontSize: "24px" }}
+          value={header}
+          setValue={(value) => handleSetValue("header", value)}
           onFocus={() => setActiveInput({ title: true, description: false })}
           onBlur={() => setActiveInput((prev) => ({ ...prev, title: false }))}
         />
         <Input
+          placeholder="Form description"
+          isShowBulletedList
+          isShowNumberedList
+          fontSize={14}
           active={activeInput.description}
-          placeholder={constant.header.placeholder.description}
-          editorState={description}
-          setEditorState={setDescription}
-          isShowNumberedList={true}
-          isShowBulletedList={true}
-          sx={{ fontSize: "12px" }}
+          value={description}
+          setValue={(value) => handleSetValue("description", value)}
           onFocus={() => setActiveInput({ title: false, description: true })}
           onBlur={() =>
             setActiveInput((prev) => ({ ...prev, description: false }))

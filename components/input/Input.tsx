@@ -1,72 +1,83 @@
-import { Box, SxProps, Theme } from "@mui/material";
-import { Editor, EditorState } from "draft-js";
-import "draft-js/dist/Draft.css";
+"use client";
+import { Box } from "@mui/material";
+import Placeholder from "@tiptap/extension-placeholder";
+import Underline from "@tiptap/extension-underline";
+import { Content, EditorContent, JSONContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 import { SyntheticEvent } from "react";
 import RichTextButtons from "../richText/RichTextButtons";
-import "./style.css";
+import "../styles/editor-style.css";
 
-interface IInputProps {
-  editorState: EditorState;
-  placeholder?: string;
-  active?: boolean;
-  setEditorState: (editorState: EditorState) => void;
-  onBlur?: (e: SyntheticEvent) => void;
-  onFocus?: (e: SyntheticEvent) => void;
-  sx?: SxProps<Theme>;
-  isShowNumberedList?: boolean;
-  isShowBulletedList?: boolean;
+export enum InputVariant {
+  STANDARD = "standard",
+  OUTLINED = "outlined",
+  FILLED = "filled",
 }
 
-const styleMap = {
-  FONT_FAMILY_ROBOTO: {
-    fontFamily: "Roboto, sans-serif",
-  },
-  FONT_FAMILY_ARIAL: {
-    fontFamily: "Arial, sans-serif",
-  },
-  FONT_FAMILY_GEORGIA: {
-    fontFamily: "Georgia, serif",
-  },
-  FONT_FAMILY_COURIER: {
-    fontFamily: "Courier New, monospace",
-  },
-};
+interface IInputProps {
+  active?: boolean;
+  onBlur?: (e: SyntheticEvent) => void;
+  onFocus?: (e: SyntheticEvent) => void;
+  isShowNumberedList?: boolean;
+  isShowBulletedList?: boolean;
+  fontSize?: number;
+  placeholder?: string;
+  variant?: InputVariant;
+  setValue: (value: JSONContent) => void;
+  value?: string | number | readonly string[] | any | undefined;
+}
 
 const Input = ({
-  editorState,
+  isShowBulletedList,
+  isShowNumberedList,
+  fontSize = 24,
   placeholder,
-  setEditorState,
   onBlur,
   onFocus,
   active,
-  isShowNumberedList,
-  isShowBulletedList,
-  sx,
+  variant = InputVariant.STANDARD,
+  setValue,
+  value,
 }: IInputProps) => {
+  const editor = useEditor({
+    extensions: [StarterKit, Underline, Placeholder.configure({ placeholder })],
+    content: value ? value : "",
+    editorProps: {
+      attributes: {
+        class: `${
+          variant === InputVariant.STANDARD
+            ? "standard-editor"
+            : "filled-editor"
+        } editor-font-${fontSize} ${
+          active ? "active-input" : "inactive-input"
+        }`,
+      },
+    },
+    immediatelyRender: false,
+    onUpdate({ editor }) {
+      setValue(editor.getJSON());
+      console.log(editor.getJSON());
+    },
+  });
+
+  if (!editor) {
+    return null;
+  }
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-      <Box
-        sx={{
-          paddingBottom: "5px",
-          borderBottom: active ? "2px solid #4e6da0" : "1px solid #f2f2f2",
-          ...sx,
-        }}
-      >
-        <Editor
-          placeholder={placeholder}
-          editorState={editorState}
-          onChange={setEditorState}
-          onBlur={onBlur}
-          onFocus={onFocus}
-          customStyleMap={styleMap}
-        />
-      </Box>
+      <EditorContent
+        onBlur={onBlur}
+        onFocus={onFocus}
+        className="editor-container"
+        editor={editor}
+        value={value}
+      />
       <Box sx={{ display: active ? "flex" : "none" }}>
         <RichTextButtons
+          editor={editor}
           isShowNumberedList={isShowNumberedList}
           isShowBulletedList={isShowBulletedList}
-          value={editorState}
-          setValue={setEditorState}
         />
       </Box>
     </Box>

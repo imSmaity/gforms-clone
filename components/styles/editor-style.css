@@ -1,0 +1,63 @@
+.DraftEditor-editorContainer {
+  font-size: 20px; /* Change font size */
+}
+
+/* -------------------- */
+.editor-container {
+  width: 100%;
+}
+
+.standard-editor {
+  outline: none;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.filled-editor {
+  outline: none;
+  border-bottom: 1px solid #f2f2f2;
+  background-color: #f8f9fa;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  padding: 10px;
+  padding-top: 10px;
+}
+
+/* input state styles */
+.active-input {
+  border-bottom: 2px solid #4e6da0;
+}
+
+.inactive-input {
+  border-bottom: 1px solid #f2f2f2;
+  background-color: #ffffff;
+}
+
+.editor-font-24 {
+  font-size: 24px;
+}
+
+.editor-font-14 {
+  font-size: 14px;
+}
+
+.editor p {
+  margin: 0; /* Remove the margin */
+  padding: 0; /* Remove any padding */
+}
+
+/* Placeholder style */
+.tiptap p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.tiptap p.is-empty::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
