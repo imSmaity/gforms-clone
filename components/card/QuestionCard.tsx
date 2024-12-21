@@ -22,7 +22,7 @@ export default function QuestionCard({
       // ref={ref}
       id="form-card"
       sx={{
-        width: "55%",
+        width: { sm: "100%", md: "55%" },
         // borderLeft: isActive ? "5px solid #4285f4" : "0",
         p: 1,
         borderRadius: 2,

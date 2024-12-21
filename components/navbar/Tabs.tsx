@@ -8,6 +8,7 @@ import { selectTabs, setTab } from "@/lib/redux/tab/tabSlice";
 import { TABS } from "@/lib/redux/tab/types";
 import Form from "../pages/Form/Form";
 import Responses from "../pages/Form/Responses";
+import Navbar from "./Navbar";
 
 function a11yProps(index: number) {
   return {
@@ -36,7 +37,8 @@ export default function AppTabs() {
   };
 
   return (
-    <>
+    <React.Fragment>
+      <Navbar isEditView />
       <Box
         sx={{
           width: "100%",
@@ -73,6 +75,6 @@ export default function AppTabs() {
         </Box>
       </Box>
       <ActiveTab value={currentTab} />
-    </>
+    </React.Fragment>
   );
 }

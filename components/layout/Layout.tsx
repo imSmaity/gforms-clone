@@ -5,8 +5,7 @@ import { ThemeProvider } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
-import Navbar from "../navbar/Navbar";
-import AppTabs from "../navbar/Tabs";
+import AlertSignIn from "../pages/auth/AlertSignIn";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +19,7 @@ const Layout = ({ children }: ILayoutProps) => {
       <QueryClientProvider client={queryClient}>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            <Navbar />
+            <AlertSignIn />
             {children}
           </ThemeProvider>
         </AppRouterCacheProvider>

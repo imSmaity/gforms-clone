@@ -1,4 +1,5 @@
-import * as React from "react";
+"use client";
+import React, { useEffect } from "react";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
@@ -9,6 +10,16 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
+import { apiConfig } from "@/config/apiConfig";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { selectUser, STATUS } from "@/lib/redux/user/userSlice";
+import { encodeURL } from "@/utils/secureUrl";
+import { usePathname } from "next/navigation";
+import _localStorage from "@/utils/_localStorage";
+import { constant } from "@/config/constant";
+import { userSession } from "@/lib/redux/user/thunk";
+
+interface IAlertSignInProps {}
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -20,18 +31,24 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const AlertSignIn = () => {
-  const [open, setOpen] = React.useState(true);
+const AlertSignIn = ({}: IAlertSignInProps) => {
+  const path = usePathname();
+  const user = useAppSelector(selectUser);
+  const dispatch = useAppDispatch();
+  const isOpen =
+    user.loginStatus === STATUS.IDLE || user.loginStatus === STATUS.REJECTED;
+  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${apiConfig.googleAuth.clientId}&state=${path}&response_type=code&scope=openid email profile&redirect_uri=${apiConfig.googleAuth.redirectURL}&prompt=consent&include_granted_scopes=true`;
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
+  useEffect(() => {
+    const access_token = _localStorage.get(constant.localStorageKeys.authKey);
+    if (access_token) {
+      dispatch(userSession({ access_token }));
+    }
+  }, []);
 
+  if (!isOpen) return null;
   return (
-    <BootstrapDialog aria-labelledby="customized-dialog-title" open={open}>
+    <BootstrapDialog aria-labelledby="customized-dialog-title" open={isOpen}>
       <DialogTitle
         sx={{ m: 0, p: 2, fontWeight: "700" }}
         id="customized-dialog-title"
@@ -45,12 +62,8 @@ const AlertSignIn = () => {
         </Typography>
       </DialogContent>
       <DialogActions>
-        <Link
-          href={`https://accounts.google.com/o/oauth2/v2/auth?client_id=1058417054516-j0ffa468ar087q33cedj6ers4711rauu.apps.googleusercontent.com&response_type=code&state=state_parameter_passthrough_value&scope=openid email profile&redirect_uri=http://localhost:3000/forms/auth&prompt=consent&include_granted_scopes=true`}
-        >
-          <Button autoFocus onClick={handleClose}>
-            Sign In
-          </Button>
+        <Link href={authUrl}>
+          <Button autoFocus>Sign In</Button>
         </Link>
       </DialogActions>
     </BootstrapDialog>

@@ -13,6 +13,9 @@ export const answerTypes = {
 };
 
 export const constant = {
+  localStorageKeys: {
+    authKey: "gform_google_auth",
+  },
   header: {
     emptyTitle: "Untitled form",
     placeholder: {

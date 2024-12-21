@@ -5,6 +5,7 @@ import {
   autoSave,
   getActiveForm,
   getFormQuestions,
+  getViewForm,
   saveFormQuestion,
   updateFormQuestionsPosition,
 } from "./thunk";
@@ -17,6 +18,7 @@ interface FormState {
   asyncSaveForm: string;
   getQuestionsAsync: string;
   asyncSaveQuestion: string;
+  formViewAsync: string;
 }
 
 export const STATUS = {
@@ -33,6 +35,7 @@ const initialState: FormState = {
   asyncSaveForm: STATUS.IDLE,
   getQuestionsAsync: STATUS.IDLE,
   asyncSaveQuestion: STATUS.IDLE,
+  formViewAsync: STATUS.IDLE,
 };
 
 export const formSlice = createSlice({
@@ -98,6 +101,17 @@ export const formSlice = createSlice({
     });
     builder.addCase(saveFormQuestion.rejected, (state) => {
       state.asyncSaveQuestion = STATUS.REJECTED;
+    });
+    // form view
+    builder.addCase(getViewForm.pending, (state) => {
+      state.formViewAsync = STATUS.PENDING;
+    });
+    builder.addCase(getViewForm.fulfilled, (state, action) => {
+      if (action.payload) state.form = convertToObjectForm(action.payload.data);
+      state.formViewAsync = STATUS.FULFILLED;
+    });
+    builder.addCase(getViewForm.rejected, (state) => {
+      state.formViewAsync = STATUS.REJECTED;
     });
   },
 });

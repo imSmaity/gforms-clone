@@ -28,9 +28,9 @@ export interface IQuestion {
 }
 
 export interface ISaveFormAsync {
-  _id: string;
+  _id?: string;
   userId: string;
-  data: IForm;
+  data?: IForm;
 }
 
 export interface IGetQuestionsAsync {

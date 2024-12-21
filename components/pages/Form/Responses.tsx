@@ -18,6 +18,7 @@ const Responses = () => {
   const formId = form?._id;
 
   const fetchFormResponses = (page: number = 1) => {
+    if (form && form?.responsesUsers.length == 0) return;
     setLoading(true);
     const responserId = form?.responsesUsers[page - 1];
     const userId = form?.userId;
@@ -56,7 +57,14 @@ const Responses = () => {
         gap: 2,
       }}
     >
-      <Stack spacing={2} sx={{ position: "fixed", backgroundColor: "#ffffff" }}>
+      <Stack
+        spacing={2}
+        sx={{
+          display: answers ? "flex" : "none",
+          position: "fixed",
+          backgroundColor: "#ffffff",
+        }}
+      >
         <Pagination
           count={form?.responsesUsers.length}
           onChange={(e, page) => handleFetchResponses(page)}

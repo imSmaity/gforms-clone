@@ -1,5 +1,24 @@
 export const apiConfig = {
   baseURL: process.env.NEXT_PUBLIC_DEV_API_URL,
+  googleAuth: {
+    clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+    redirectURL: process.env.NEXT_PUBLIC_REDIRECT_URI,
+  },
+  GOOGLE: {
+    BASE: "/google",
+    AUTH: {
+      BASE: "/auth",
+    },
+    VERIFY: {
+      BASE: "/verify",
+    },
+  },
+  USER: {
+    BASE: "/user",
+    SESSION: {
+      BASE: "/session",
+    },
+  },
   FORMS: {
     BASE: "forms",
   },
@@ -10,6 +29,9 @@ export const apiConfig = {
     },
     SUBMIT: {
       BASE: "/submit",
+    },
+    VIEW: {
+      BASE: "/view",
     },
     RESPONSES: {
       BASE: "/responses",

@@ -35,9 +35,8 @@ export default function DraggableCards({
   handleUpdatePosition,
   handleChangeQuestionData,
 }: IDraggableCardsProps) {
-  const initialActiveCard = Array.isArray(questions)
-    ? String(questions[0]._id)
-    : "-1";
+  const initialActiveCard =
+    questions && questions?.length > 0 ? String(questions[0]._id) : "-1";
   const [items, setItems] = useState<IQuestion[]>([]);
   const [activeCard, setActiveCard] = useState<string>(initialActiveCard);
 
@@ -100,7 +99,7 @@ export default function DraggableCards({
           sx={{
             display: "flex",
             flexDirection: "column",
-            width: "55%",
+            width: { sm: "100%", md: "55%" },
             gap: 2,
           }}
         >

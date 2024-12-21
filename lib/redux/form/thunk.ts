@@ -17,6 +17,13 @@ export const getActiveForm = createAsyncThunk(
   }
 );
 
+export const getViewForm = createAsyncThunk(
+  "form/view",
+  async ({ _id, userId }: { _id: string; userId: string }) => {
+    return (await Api.getViewForm({ _id, userId })) as { data: IForm };
+  }
+);
+
 export const autoSave = createAsyncThunk(
   "form/autoSave",
   async (data: ISaveFormAsync) => {

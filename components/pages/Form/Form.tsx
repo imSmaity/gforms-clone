@@ -25,7 +25,7 @@ import { useCallback, useLayoutEffect, useState } from "react";
 import { v1 as uuid } from "uuid";
 
 export default function Form() {
-  const user = useAppSelector(selectUser);
+  const { user } = useAppSelector(selectUser);
   const { form, getAsyncStatus, questions } = useAppSelector(selectForm);
   const dispatch = useAppDispatch();
 
@@ -35,38 +35,32 @@ export default function Form() {
 
   const params = useParams();
   const formId = String(params?.id);
-  const userId = user._id;
+  const userId = user?._id || "";
   const isLoading =
     getAsyncStatus === STATUS.PENDING || getAsyncStatus === STATUS.IDLE;
 
   useLayoutEffect(() => {
     if (userId && formId) {
-      dispatch(getActiveForm({ _id: formId, userId }));
+      dispatch(getActiveForm({ _id: formId, userId }))
+        .unwrap()
+        .then((res) => {
+          const data = res?.data;
+          if (data) {
+            dispatch(getFormQuestions({ formId: data?._id }))
+              .unwrap()
+              .then((res) => {
+                const data = res?.data;
+                setActiveQuestions(data);
+              })
+              .catch(console.error);
+          }
+        })
+        .catch(console.error);
     }
-  }, []);
-
-  useLayoutEffect(() => {
-    if (formId && !questions) {
-      dispatch(getFormQuestions({ formId }));
-    }
-
-    if (questions) {
-      setActiveQuestions(questions);
-    }
-  }, [questions]);
-
-  // if (!isLoading && !form) {
-  //   //if form id not found
-  //   redirect("/");
-  // }
+  }, [userId, formId]);
 
   const addQuestions = () => {
     const initialData = { label: {}, options: [], type: "multiple_choice" };
-    // if (Array.isArray(activeQuestions))
-    //   setActiveQuestions([
-    //     ...activeQuestions,
-    //     { tempId: uuid(), ...initialData },
-    //   ]);
     dispatch(saveFormQuestion({ userId, formId, data: initialData }));
   };
 
@@ -112,6 +106,11 @@ export default function Form() {
     _.debounce((data) => dispatch(updateFormQuestionsPosition(data)), 1000),
     []
   );
+
+  const isNotOwnFrom = user && !form && STATUS.FULFILLED;
+  if (isNotOwnFrom) {
+    redirect(`/forms/${formId}/viewform`);
+  }
 
   if (isLoading)
     return (

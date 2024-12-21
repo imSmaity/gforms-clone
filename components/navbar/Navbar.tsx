@@ -1,29 +1,33 @@
 "use client";
-import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import Logo from "../logo/Logo";
-import AppTabs from "./Tabs";
-import { useAppSelector } from "@/lib/redux/hooks";
-import { usePathname } from "next/navigation";
 import { selectForm, STATUS } from "@/lib/redux/form/formSlice";
-import CloudSyncOutlinedIcon from "@mui/icons-material/CloudSyncOutlined";
-import CloudDoneOutlinedIcon from "@mui/icons-material/CloudDoneOutlined";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { selectResponder } from "@/lib/redux/responder/responderSlice";
+import { logout, selectUser } from "@/lib/redux/user/userSlice";
+import CloudDoneOutlinedIcon from "@mui/icons-material/CloudDoneOutlined";
+import CloudSyncOutlinedIcon from "@mui/icons-material/CloudSyncOutlined";
+import AppBar from "@mui/material/AppBar";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Toolbar from "@mui/material/Toolbar";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import { usePathname } from "next/navigation";
+import React, { useState } from "react";
+import Logo from "../logo/Logo";
+import { Button } from "@mui/material";
+import ShareModal from "../modal/ShareModal";
 
-const pages = ["Products", "Pricing", "Blog"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+interface INavbar {
+  isEditView?: boolean;
+  isViewForm?: boolean;
+}
 
-function Navbar() {
+const Navbar = React.memo(({ isEditView, isViewForm }: INavbar) => {
+  const [openShareModal, setOpenShareModal] = useState<boolean>(false);
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -31,9 +35,10 @@ function Navbar() {
     null
   );
   const { form, asyncSaveForm, asyncSaveQuestion } = useAppSelector(selectForm);
+  const { user } = useAppSelector(selectUser);
+  const dispatch = useAppDispatch();
   const { saveAnswerAsync } = useAppSelector(selectResponder);
   const pathname = usePathname();
-  const isShowAppBar = pathname !== "/forms";
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -42,13 +47,25 @@ function Navbar() {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    handleCloseUserMenu();
+  };
+
+  const handleOpenShare = {
+    open() {
+      setOpenShareModal(true);
+    },
+    close() {
+      setOpenShareModal(false);
+    },
+  };
+
+  const settings = [{ title: "Logout", handleClick: handleLogout }];
 
   const isFormSaving =
     asyncSaveForm === STATUS.PENDING ||
@@ -61,8 +78,18 @@ function Navbar() {
       sx={{ backgroundColor: "#ffffff", boxShadow: "none" }}
     >
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <Toolbar
+          disableGutters
+          sx={{ display: "flex", justifyContent: "space-between" }}
+        >
+          <Box
+            sx={{
+              display: isViewForm ? "none" : "flex",
+              visibility: isEditView ? "initial" : "hidden",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
             <Logo />
             <Typography sx={{ color: "#000000", fontSize: 20 }}>
               {form?.title}
@@ -73,58 +100,54 @@ function Navbar() {
               <CloudDoneOutlinedIcon />
             )}
           </Box>
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              {/* <MenuIcon /> */}
-            </IconButton>
-          </Box>
-          {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}></Box>
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar
-                  alt="Remy Sharp"
-                  src="https://api.dicebear.com/9.x/initials/svg?seed=SumanMaity"
-                />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
+          <Box sx={{ display: "flex", gap: 3 }}>
+            <Button
+              variant="contained"
+              sx={{
+                display: isEditView ? "block" : "none",
+                px: 3,
+                textTransform: "none",
               }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
+              onClick={handleOpenShare.open}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: "center" }}>
-                    {setting}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
+              Send
+            </Button>
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt={user?.name} src={user?.picture} />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) => (
+                  <MenuItem key={setting.title} onClick={setting.handleClick}>
+                    <Typography sx={{ textAlign: "center" }}>
+                      {setting.title}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
           </Box>
         </Toolbar>
-        {/* {isShowAppBar ? <AppTabs /> : null} */}
       </Container>
+      <ShareModal open={openShareModal} handleClose={handleOpenShare.close} />
     </AppBar>
   );
-}
+});
 export default Navbar;
