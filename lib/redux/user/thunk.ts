@@ -21,3 +21,13 @@ export const userSession = createAsyncThunk(
     };
   }
 );
+
+export const userAsGuest = createAsyncThunk(
+  "user/guest",
+  async (data: { email: string }) => {
+    return (await Api.userAsGuest(data)) as {
+      user: IUser;
+      access_token: string;
+    };
+  }
+);

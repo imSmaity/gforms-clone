@@ -66,6 +66,18 @@ export default {
         .catch((error) => reject(error));
     });
   },
+  userAsGuest({ email }: { email: string }) {
+    return new Promise((resolve, reject) => {
+      axiosSecureInstance()
+        .post(GOOGLE.BASE.concat(GOOGLE.AUTH.BASE).concat(GOOGLE.GUEST.BASE), {
+          email,
+        })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => reject(error));
+    });
+  },
   userSession({ access_token }: IUserSessionAsync) {
     return new Promise((resolve, reject) => {
       axiosSecureInstance(access_token)
