@@ -111,17 +111,17 @@ export default function Form() {
     []
   );
 
-  const isNotOwnFrom = user && !form && STATUS.FULFILLED;
-  if (isNotOwnFrom) {
-    redirect(`/forms/${formId}/viewform`);
-  }
-
   if (isLoading)
     return (
       <Box sx={{ pt: 15 }}>
         <LinearProgress />
       </Box>
     );
+
+  const isNotOwnFrom = user && !form && STATUS.FULFILLED;
+  if (isNotOwnFrom) {
+    redirect(`/forms/${formId}/viewform`);
+  }
 
   return (
     <div>

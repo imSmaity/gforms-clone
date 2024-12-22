@@ -5,28 +5,19 @@ import Loading from "@/components/loading/Loading";
 import Navbar from "@/components/navbar/Navbar";
 import { IForm } from "@/lib/redux/form/types";
 import { useAppSelector } from "@/lib/redux/hooks";
-import { selectUser } from "@/lib/redux/user/userSlice";
+import { selectUser, STATUS } from "@/lib/redux/user/userSlice";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import { Box, Card, Grid } from "@mui/material";
+import { Card, Grid } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Forms = () => {
-  const { user } = useAppSelector(selectUser);
+  const { user, loginStatus } = useAppSelector(selectUser);
   const userId = user?._id || "";
   const [data, setData] = useState<IForm[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
-  // const { isLoading, data } = useQuery({
-  //   queryKey: [user?._id],
-  //   queryFn: () => {
-  //     if (!user._id) return Promise.reject("User not found");
-  //     else return Api.getForms({ userId: user._id });
-  //   },
-  // });
-  //use react query
 
   const fetchForms = (userId: string) => {
     setIsLoading(true);
@@ -58,7 +49,7 @@ const Forms = () => {
       .catch(console.error);
   };
 
-  if (isLoading) return <Loading />;
+  if (isLoading || loginStatus === STATUS.PENDING) return <Loading />;
 
   return (
     <React.Fragment>
