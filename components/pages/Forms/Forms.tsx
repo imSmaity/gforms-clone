@@ -7,7 +7,7 @@ import { IForm } from "@/lib/redux/form/types";
 import { useAppSelector } from "@/lib/redux/hooks";
 import { selectUser, STATUS } from "@/lib/redux/user/userSlice";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import { Card, Grid } from "@mui/material";
+import { Alert, Box, Card, Grid } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -16,7 +16,7 @@ const Forms = () => {
   const { user, loginStatus } = useAppSelector(selectUser);
   const userId = user?._id || "";
   const [data, setData] = useState<IForm[] | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   const fetchForms = (userId: string) => {
@@ -49,7 +49,18 @@ const Forms = () => {
       .catch(console.error);
   };
 
-  if (isLoading || loginStatus === STATUS.PENDING) return <Loading />;
+  if (isLoading || loginStatus === STATUS.PENDING)
+    return (
+      <>
+        <Loading sx={{ height: "85vh" }} />
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Alert variant="outlined" severity="info" sx={{ maxWidth: 450 }}>
+            Please note: The app is hosted on a free tier, so the first-time
+            loading might take up to 1 minute. Thank you for your patience!
+          </Alert>
+        </Box>
+      </>
+    );
 
   return (
     <React.Fragment>

@@ -8,12 +8,14 @@ interface IQuestionCardProps {
   children: React.ReactNode;
   sx?: SxProps<Theme>;
   handleActive?: () => void;
+  isActive?: boolean;
 }
 
 export default function QuestionCard({
   children,
   sx,
   handleActive,
+  isActive,
 }: IQuestionCardProps) {
   // const { ref, isActive } = useOutsideClick();
 
@@ -23,8 +25,7 @@ export default function QuestionCard({
       id="form-card"
       sx={{
         width: { sm: "100%", md: "55%" },
-        // borderLeft: isActive ? "5px solid #4285f4" : "0",
-        p: 1,
+        borderLeft: isActive ? "5px solid #4285f4" : "0",
         borderRadius: 2,
         ...sx,
       }}
