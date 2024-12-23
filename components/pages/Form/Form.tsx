@@ -26,7 +26,8 @@ import { v1 as uuid } from "uuid";
 
 export default function Form() {
   const { user } = useAppSelector(selectUser);
-  const { form, getAsyncStatus, questions } = useAppSelector(selectForm);
+  const { form, getAsyncStatus, questions, getQuestionsAsync } =
+    useAppSelector(selectForm);
   const dispatch = useAppDispatch();
 
   const [activeQuestions, setActiveQuestions] = useState<IQuestion[] | null>(
@@ -38,6 +39,7 @@ export default function Form() {
   const userId = user?._id || "";
   const isLoading =
     getAsyncStatus === STATUS.PENDING || getAsyncStatus === STATUS.IDLE;
+  const isQuestionsLoad = getQuestionsAsync === STATUS.PENDING;
 
   useLayoutEffect(() => {
     if (userId && formId) {
@@ -132,13 +134,13 @@ export default function Form() {
             flexDirection: "column",
             alignItems: "center",
             pt: 15,
-            gap: 2,
           }}
         >
           <HeaderSlide
             header={form?.header}
             description={form?.description}
             handleSetValue={handleSetValue}
+            isLoading={isQuestionsLoad}
           />
           <DraggableCards
             questions={activeQuestions}

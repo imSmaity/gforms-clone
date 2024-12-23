@@ -1,14 +1,19 @@
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, SxProps } from "@mui/material";
 import React from "react";
 
-const Loading = () => {
+interface ILoadingProps {
+  sx?: SxProps;
+}
+
+const Loading = ({ sx }: ILoadingProps) => {
   return (
     <Box
       sx={{
-        height: "100vh",
+        height: "90vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        ...sx,
       }}
     >
       <CircularProgress />
