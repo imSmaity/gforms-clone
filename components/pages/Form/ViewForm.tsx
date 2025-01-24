@@ -9,7 +9,7 @@ import { selectResponder } from "@/lib/redux/responder/responderSlice";
 import { getFormAnswers, saveAnswer } from "@/lib/redux/responder/thunk";
 import { selectUser } from "@/lib/redux/user/userSlice";
 import { toObject } from "@/utils/modifyObjects";
-import { Box, Button, LinearProgress } from "@mui/material";
+import { Box, Button, LinearProgress, Typography } from "@mui/material";
 import _ from "lodash";
 import { redirect, useParams } from "next/navigation";
 import React, { useCallback, useLayoutEffect, useState } from "react";
@@ -36,7 +36,6 @@ export default function ViewForm() {
         .then((res) => {
           const form = res?.data;
           if (form && userId !== form?.userId) {
-            console.log("entered");
             dispatch(getFormAnswers({ formId: form?._id, userId }));
           }
         })
@@ -76,7 +75,6 @@ export default function ViewForm() {
 
   return (
     <React.Fragment>
-      <Navbar isViewForm />
       <LinearProgress sx={{ display: isLoading ? "block" : "none" }} />
       <Box
         sx={{
@@ -89,15 +87,29 @@ export default function ViewForm() {
       >
         <QuestionCard>
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Content value={form ? form.header : {}} style={{ fontSize: 24 }} />
-            <Content value={form ? form.description : {}} />
+            {form ? (
+              <>
+                <Content value={form?.header} style={{ fontSize: 24 }} />
+                <Content value={form?.description} />
+              </>
+            ) : null}
           </Box>
         </QuestionCard>
         {answers?.map((answer) => {
           return (
             <QuestionCard key={answer._id}>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <Content value={toObject(answer.question?.label)} />
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Content value={toObject(answer.question?.label)} />
+                  <Typography
+                    sx={{
+                      display: answer.question.required ? "flex" : "none",
+                      color: "red",
+                    }}
+                  >
+                    *
+                  </Typography>
+                </Box>
                 <Answer
                   answerId={answer._id}
                   handleSaveAnswer={handleSaveAnswer}

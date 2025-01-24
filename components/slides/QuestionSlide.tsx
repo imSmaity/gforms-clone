@@ -33,11 +33,12 @@ interface IQuestionSlideProps {
   _id: string;
   label: JSONContent;
   value: JSONContent;
+  required?: boolean;
   type: string;
   options?: IOption[];
   activeCard: string;
   setActiveCard: (v: string) => void;
-  handleSaveQuestion: ({ _id, data }: { _id: string; data: IQuestion }) => void;
+  handleSaveQuestion: ({ _id, data }: { _id: string; data: any }) => void;
 }
 
 const AnswerComponent = ({
@@ -93,6 +94,7 @@ const QuestionSlide = ({
   label,
   value,
   options,
+  required,
   activeCard,
   setActiveCard,
   handleSaveQuestion,
@@ -101,6 +103,9 @@ const QuestionSlide = ({
   const dispatch = useAppDispatch();
   const initialOptions = options ? options : [];
   const [activeInput, setActiveInput] = useState<boolean>(false);
+  const [requiredState, setRequiredState] = useState<boolean>(
+    Boolean(required)
+  );
   const [questionLabel, setQuestionLabel] = useState<JSONContent>(label);
   const [questionOptions, setQuestionOptions] =
     useState<IOption[]>(initialOptions);
@@ -139,6 +144,14 @@ const QuestionSlide = ({
     handleSaveQuestion({ _id, data });
   };
 
+  const handleRequired = (value: boolean) => {
+    setRequiredState(value);
+    const data = {
+      required: value,
+    };
+    handleSaveQuestion({ _id, data });
+  };
+
   const handleDeleteQuestion = (_id: string, questions: IQuestion[] | null) => {
     if (questions) {
       const items = deleteQuestionUtil(_id, questions);
@@ -155,6 +168,7 @@ const QuestionSlide = ({
   return (
     <QuestionCard
       sx={{ width: "100%" }}
+      isActive={isActive}
       handleActive={() => setActiveCard(_id)}
     >
       <Box
@@ -203,7 +217,9 @@ const QuestionSlide = ({
         />
         {isActive ? (
           <CardFooter
+            required={requiredState}
             handleDeleteQuestion={() => handleDeleteQuestion(_id, questions)}
+            handleRequired={handleRequired}
           />
         ) : null}
       </Box>

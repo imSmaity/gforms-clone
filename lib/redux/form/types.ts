@@ -25,12 +25,19 @@ export interface IQuestion {
   type: string;
   label: JSONContent;
   options: IOption[];
+  required?: boolean;
 }
 
 export interface ISaveFormAsync {
   _id?: string;
   userId: string;
   data?: IForm;
+}
+
+export interface ISaveFormTitleAsync {
+  _id?: string;
+  userId: string;
+  title: string;
 }
 
 export interface IGetQuestionsAsync {

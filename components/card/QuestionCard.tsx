@@ -18,15 +18,14 @@ export default function QuestionCard({
   isActive,
 }: IQuestionCardProps) {
   // const { ref, isActive } = useOutsideClick();
-
   return (
     <Card
       // ref={ref}
       id="form-card"
       sx={{
         width: { sm: "100%", md: "55%" },
-        borderLeft: isActive ? "5px solid #4285f4" : "0",
-        borderRadius: 2,
+        borderLeft: isActive ? "6px solid #4285f4" : "0",
+        borderRadius: 1,
         ...sx,
       }}
       onClick={handleActive}

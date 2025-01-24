@@ -6,6 +6,7 @@ import {
   IGetResponsesAsync,
   ISaveAnswerAsync,
   ISaveFormAsync,
+  ISaveFormTitleAsync,
   ISaveQuestionAsync,
   IUpdateQuestionsPositionAsync,
 } from "@/lib/redux/form/types";
@@ -126,6 +127,18 @@ export default {
     return new Promise((resolve, reject) => {
       axiosSecureInstance()
         .post(FORM.BASE.concat(FORM.SAVE.BASE), {
+          ...data,
+        })
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => reject(error));
+    });
+  },
+  saveTitle(data: ISaveFormTitleAsync) {
+    return new Promise((resolve, reject) => {
+      axiosSecureInstance()
+        .put(FORM.BASE.concat(FORM.SAVE.BASE).concat(FORM.TITLE.BASE), {
           ...data,
         })
         .then((res) => {

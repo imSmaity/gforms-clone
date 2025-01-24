@@ -1,9 +1,7 @@
 "use client";
 import AddQuestion from "@/components/card/AddQuestion";
-import Demo from "@/components/Demo";
 import DraggableCards from "@/components/drag-and-drop/DraggableCards";
 import HeaderSlide from "@/components/slides/HeaderSlide";
-import QuestionSlide from "@/components/slides/QuestionSlide";
 import { selectForm, STATUS } from "@/lib/redux/form/formSlice";
 import {
   autoSave,
@@ -15,14 +13,11 @@ import {
 import { IQuestion, ISaveQuestionAsync } from "@/lib/redux/form/types";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { selectUser } from "@/lib/redux/user/userSlice";
-import { DndContext } from "@dnd-kit/core";
-import { SortableContext } from "@dnd-kit/sortable";
-import { Box, Card, LinearProgress } from "@mui/material";
+import { Box, LinearProgress } from "@mui/material";
 import { JSONContent } from "@tiptap/react";
 import _ from "lodash";
 import { redirect, useParams } from "next/navigation";
 import { useCallback, useLayoutEffect, useState } from "react";
-import { v1 as uuid } from "uuid";
 
 export default function Form() {
   const { user } = useAppSelector(selectUser);

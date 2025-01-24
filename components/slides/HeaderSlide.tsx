@@ -64,10 +64,10 @@ const HeaderSlide = ({
       <LinearProgress
         sx={{
           visibility: isLoading ? "initial" : "hidden",
-          width: { sm: "100%", md: "54.5%" },
+          width: { sm: "100%", md: "54.6%" },
           marginBottom: 2,
-          borderBottomLeftRadius: "20px",
-          borderBottomRightRadius: "20px",
+          borderBottomLeftRadius: "25px",
+          borderBottomRightRadius: "25px",
         }}
       />
     </>

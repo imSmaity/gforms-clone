@@ -16,10 +16,18 @@ import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React, {
+  ChangeEvent,
+  useCallback,
+  useLayoutEffect,
+  useState,
+} from "react";
 import Logo from "../logo/Logo";
-import { Button } from "@mui/material";
+import { Button, Input } from "@mui/material";
 import ShareModal from "../modal/ShareModal";
+import { debounce } from "lodash";
+import { ISaveFormTitleAsync } from "@/lib/redux/form/types";
+import Api from "@/Api";
 
 interface INavbar {
   isEditView?: boolean;
@@ -38,7 +46,12 @@ const Navbar = React.memo(({ isEditView, isViewForm }: INavbar) => {
   const { user } = useAppSelector(selectUser);
   const dispatch = useAppDispatch();
   const { saveAnswerAsync } = useAppSelector(selectResponder);
+  const [title, setTitle] = useState<string>("");
   const pathname = usePathname();
+
+  useLayoutEffect(() => {
+    if (form?.title) setTitle(form?.title);
+  }, [form?.title]);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -65,8 +78,31 @@ const Navbar = React.memo(({ isEditView, isViewForm }: INavbar) => {
     },
   };
 
+  const updateTitle = (data: ISaveFormTitleAsync) => {
+    Api.saveTitle(data).catch(console.log);
+  };
+
+  const handleUpdateTitle = useCallback(
+    debounce((data: ISaveFormTitleAsync) => updateTitle(data), 500),
+    []
+  );
+
+  const handleChangeTitle = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const value = e.target.value;
+    setTitle(value);
+    const data: ISaveFormTitleAsync = {
+      _id: form?._id,
+      userId: String(user?._id),
+      title: value,
+    };
+    handleUpdateTitle(data);
+  };
+
   const settings = [{ title: "Logout", handleClick: handleLogout }];
 
+  const isNotOwnFrom = user && !form;
   const isFormSaving =
     asyncSaveForm === STATUS.PENDING ||
     asyncSaveQuestion == STATUS.PENDING ||
@@ -91,9 +127,13 @@ const Navbar = React.memo(({ isEditView, isViewForm }: INavbar) => {
             }}
           >
             <Logo />
-            <Typography sx={{ color: "#000000", fontSize: 20 }}>
-              {form?.title}
-            </Typography>
+            <Input
+              disabled={Boolean(isNotOwnFrom)}
+              value={title}
+              disableUnderline
+              onChange={handleChangeTitle}
+              sx={{ maxWidth: "8rem", fontWeight: "500", fontSize: 20 }}
+            />
             {isFormSaving ? (
               <CloudSyncOutlinedIcon />
             ) : (

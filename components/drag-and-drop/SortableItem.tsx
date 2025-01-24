@@ -85,6 +85,7 @@ export const Item = forwardRef<HTMLDivElement, Props>(
           type={item.type}
           value={toObject(item.label)}
           options={item.options}
+          required={item.required}
           activeCard={activeCard}
           setActiveCard={setActiveCard}
           handleSaveQuestion={handleChangeQuestionData} //handleChangeQuestionData
