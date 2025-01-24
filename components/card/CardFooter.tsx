@@ -6,9 +6,16 @@ import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
 
 interface ICardFooterProps {
   handleDeleteQuestion: () => void;
+  required: boolean;
+  handleRequired: (value: boolean) => void;
 }
 
-const CardFooter = ({ handleDeleteQuestion }: ICardFooterProps) => {
+const CardFooter = ({
+  required,
+  handleDeleteQuestion,
+  handleRequired,
+}: ICardFooterProps) => {
+  console.log(required);
   return (
     <Box>
       <Divider />
@@ -29,7 +36,11 @@ const CardFooter = ({ handleDeleteQuestion }: ICardFooterProps) => {
         </IconButton>
         <Box sx={{ borderLeft: "1px solid #bbbbbb", height: 30 }} />
         <Box>
-          Required <Switch />
+          Required{" "}
+          <Switch
+            checked={required}
+            onChange={(e) => handleRequired(e.target.checked)}
+          />
         </Box>
         <IconButton>
           <MoreVertOutlinedIcon />

@@ -6,9 +6,11 @@ import Box from "@mui/material/Box";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
 import { selectTabs, setTab } from "@/lib/redux/tab/tabSlice";
 import { TABS } from "@/lib/redux/tab/types";
-import Form from "../pages/Form/Form";
-import Responses from "../pages/Form/Responses";
-import Navbar from "./Navbar";
+import dynamic from "next/dynamic";
+
+const Responses = dynamic(() => import("../pages/Form/Responses"));
+const Form = dynamic(() => import("../pages/Form/Form"));
+const Navbar = dynamic(() => import("./Navbar"));
 
 function a11yProps(index: number) {
   return {

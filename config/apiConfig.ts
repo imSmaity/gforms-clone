@@ -40,6 +40,9 @@ export const apiConfig = {
     RESPONSES: {
       BASE: "/responses",
     },
+    TITLE: {
+      BASE: "/title",
+    },
   },
   QUESTION: {
     BASE: "/question",
